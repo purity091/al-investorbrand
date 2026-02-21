@@ -36,6 +36,10 @@ CREATE TABLE IF NOT EXISTS programs (
     posts_count INTEGER DEFAULT 100,
     quarter_id INTEGER,
     "order" INTEGER DEFAULT 0,
+    description TEXT DEFAULT '',
+    description_ar TEXT DEFAULT '',
+    objectives TEXT DEFAULT '',
+    objectives_ar TEXT DEFAULT '',
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );

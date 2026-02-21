@@ -15,6 +15,12 @@
     -- Also ensure platform_name exists
     ALTER TABLE programs ADD COLUMN IF NOT EXISTS platform_name TEXT NOT NULL DEFAULT 'Twitter';
 
+    -- Add description and objectives columns
+    ALTER TABLE programs ADD COLUMN IF NOT EXISTS description TEXT DEFAULT '';
+    ALTER TABLE programs ADD COLUMN IF NOT EXISTS description_ar TEXT DEFAULT '';
+    ALTER TABLE programs ADD COLUMN IF NOT EXISTS objectives TEXT DEFAULT '';
+    ALTER TABLE programs ADD COLUMN IF NOT EXISTS objectives_ar TEXT DEFAULT '';
+
     -- ============================================
     -- 2. VERIFY COLUMNS EXIST
     -- ============================================

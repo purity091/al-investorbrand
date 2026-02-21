@@ -15,7 +15,14 @@ const customLock = async <R>(name: string, acquireTimeout: number, fn: () => Pro
 export const supabase = isSupabaseConfigured
     ? createClient(supabaseUrl, supabaseAnonKey, {
         auth: {
-            lock: customLock
+            lock: customLock,
+            persistSession: true,
+            autoRefreshToken: true,
+            detectSessionInUrl: true,
+            storage: window.localStorage,
+            storageKey: 'brand-auth-token',
+            // Extend session lifetime to 90 days (7776000 seconds)
+            expiresIn: 7776000,
         }
     })
     : null;

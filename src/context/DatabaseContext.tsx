@@ -11,6 +11,10 @@ interface Program {
     postsCount: number;
     quarterId: number | null;
     order: number;
+    description?: string;
+    descriptionAr?: string;
+    objectives?: string;
+    objectivesAr?: string;
 }
 
 interface Platform {
@@ -78,6 +82,10 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                     postsCount: item.posts_count,
                     quarterId: item.quarter_id,
                     order: item.order,
+                    description: item.description || '',
+                    descriptionAr: item.description_ar || '',
+                    objectives: item.objectives || '',
+                    objectivesAr: item.objectives_ar || '',
                 }));
                 setPrograms(transformed);
             }
@@ -108,6 +116,10 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                 posts_count: p.postsCount,
                 quarter_id: p.quarterId,
                 order: p.order,
+                description: p.description || '',
+                description_ar: p.descriptionAr || '',
+                objectives: p.objectives || '',
+                objectives_ar: p.objectivesAr || '',
             }));
 
             // Use upsert instead of delete+insert to avoid RLS issues

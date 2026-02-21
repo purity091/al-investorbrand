@@ -249,7 +249,7 @@ export const PlanningPage = () => {
                     .map(p => p.order),
                 -1
             );
-            
+
             const updated = localPrograms.map(p =>
                 p.id === programId
                     ? { ...p, quarterId, order: maxOrder + 1 }
@@ -274,7 +274,7 @@ export const PlanningPage = () => {
                     .map(p => p.order),
                 -1
             );
-            
+
             const updated = localPrograms.map(p =>
                 p.id === programId
                     ? { ...p, quarterId: null, order: maxOrder + 1 }
@@ -370,7 +370,7 @@ export const PlanningPage = () => {
             const importedPrograms: Program[] = data.programs.map((p: any, index: number) => {
                 // Handle both camelCase and snake_case field names
                 const platform = platforms.find(pl => pl.id === p.platform) || platforms[0];
-                
+
                 return {
                     // ✅ Generate unique ID to prevent duplicates
                     id: p.id ? Date.now() + Math.random() * 1000 : Date.now() + index,
@@ -394,12 +394,12 @@ export const PlanningPage = () => {
             if (invalidPrograms.length > 0) {
                 setImportError(`تحذير: ${invalidPrograms.length} برنامج لا يحتوي على عنوان صحيح. تم تخطيها.`);
             }
-            
+
             const validPrograms = importedPrograms.filter(p => p.title && p.titleAr);
-            
+
             // ✅ Merge with existing programs (don't delete old ones)
             const updatedPrograms = [...localPrograms, ...validPrograms];
-            
+
             setLocalPrograms(updatedPrograms);
             autoSaveToDatabase(updatedPrograms);
             setImportSuccess(`تم استيراد ${validPrograms.length} برنامج بنجاح! إجمالي البرامج: ${updatedPrograms.length}`);
@@ -463,6 +463,10 @@ export const PlanningPage = () => {
                             postsCount: postsCount,
                             quarterId: null,
                             order: index,
+                            description: '',
+                            descriptionAr: '',
+                            objectives: '',
+                            objectivesAr: '',
                         });
                     }
                 }
