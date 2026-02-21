@@ -373,7 +373,7 @@ export const PlanningPage = () => {
 
                 return {
                     // ✅ Generate unique ID to prevent duplicates
-                    id: p.id ? Date.now() + Math.random() * 1000 : Date.now() + index,
+                    id: Math.floor(Date.now() + Math.random() * 1000),
                     title: p.title || p.title || '',
                     titleAr: p.titleAr || p.title_ar || '',
                     platform: p.platform || 'twitter',
