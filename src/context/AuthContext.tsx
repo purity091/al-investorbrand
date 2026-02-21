@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { User, Session, AuthError } from '@supabase/supabase-js';
 
 interface UserProfile {
@@ -42,6 +42,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        // Skip auth initialization if Supabase is not configured
+        if (!isSupabaseConfigured || !supabase) {
+            setLoading(false);
+            return;
+        }
+
         // Get initial session
         supabase.auth.getSession().then(({ data: { session } }) => {
             setSession(session);
@@ -71,6 +77,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, []);
 
     const loadUserProfile = async (userId: string) => {
+        if (!isSupabaseConfigured || !supabase) {
+            setLoading(false);
+            return;
+        }
+
         try {
             const { data, error } = await supabase
                 .from('user_profiles')
@@ -119,6 +130,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     const signIn = async (email: string, password: string) => {
+        if (!isSupabaseConfigured || !supabase) {
+            console.warn('Supabase not configured. Sign in disabled.');
+            return { error: new Error('Supabase not configured') as any };
+        }
+
         try {
             const { error } = await supabase.auth.signInWithPassword({
                 email,
@@ -133,6 +149,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     const signUp = async (email: string, password: string, fullName?: string) => {
+        if (!isSupabaseConfigured || !supabase) {
+            console.warn('Supabase not configured. Sign up disabled.');
+            return { error: new Error('Supabase not configured') as any };
+        }
+
         try {
             const { error } = await supabase.auth.signUp({
                 email,
@@ -152,6 +173,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     const signOut = async () => {
+        if (!isSupabaseConfigured || !supabase) {
+            setUser(null);
+            setProfile(null);
+            setSession(null);
+            return;
+        }
         await supabase.auth.signOut();
         setUser(null);
         setProfile(null);
@@ -159,6 +186,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     const resetPassword = async (email: string) => {
+        if (!isSupabaseConfigured || !supabase) {
+            console.warn('Supabase not configured. Password reset disabled.');
+            return { error: new Error('Supabase not configured') as any };
+        }
+
         try {
             const { error } = await supabase.auth.resetPasswordForEmail(email, {
                 redirectTo: `${window.location.origin}/reset-password`,
@@ -172,7 +204,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     const updateUserProfile = async (updates: Partial<UserProfile>) => {
-        if (!user) return;
+        if (!user || !isSupabaseConfigured || !supabase) {
+            console.warn('Cannot update profile: Supabase not configured or user not logged in');
+            return;
+        }
 
         try {
             const { error } = await supabase
