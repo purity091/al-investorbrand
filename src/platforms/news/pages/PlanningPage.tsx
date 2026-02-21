@@ -361,7 +361,7 @@ export const PlanningPage = () => {
                     platformColor: p.platformColor || p.platform_color || platform.color,
                     postsCount: p.postsCount || p.posts_count || 100,
                     quarterId: null, // ✅ Default: not distributed (null)
-                    order: index,
+                    order: localPrograms.filter(prog => prog.quarterId === null).length, // Add to end of unassigned
                     description: p.description || p.description || '',
                     descriptionAr: p.descriptionAr || p.description_ar || '',
                     objectives: p.objectives || p.objectives || '',
@@ -373,15 +373,16 @@ export const PlanningPage = () => {
             const invalidPrograms = importedPrograms.filter(p => !p.title || !p.titleAr);
             if (invalidPrograms.length > 0) {
                 setImportError(`تحذير: ${invalidPrograms.length} برنامج لا يحتوي على عنوان صحيح. تم تخطيها.`);
-                const validPrograms = importedPrograms.filter(p => p.title && p.titleAr);
-                setLocalPrograms(validPrograms);
-                autoSaveToDatabase(validPrograms);
-                setImportSuccess(`تم استيراد ${validPrograms.length} برنامج بنجاح!`);
-            } else {
-                setLocalPrograms(importedPrograms);
-                autoSaveToDatabase(importedPrograms);
-                setImportSuccess(`تم استيراد ${importedPrograms.length} برنامج بنجاح!`);
             }
+            
+            const validPrograms = importedPrograms.filter(p => p.title && p.titleAr);
+            
+            // ✅ Merge with existing programs (don't delete old ones)
+            const updatedPrograms = [...localPrograms, ...validPrograms];
+            
+            setLocalPrograms(updatedPrograms);
+            autoSaveToDatabase(updatedPrograms);
+            setImportSuccess(`تم استيراد ${validPrograms.length} برنامج بنجاح! إجمالي البرامج: ${updatedPrograms.length}`);
 
             setTimeout(() => {
                 setImportSuccess('');
