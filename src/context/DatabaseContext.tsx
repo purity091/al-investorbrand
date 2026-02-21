@@ -83,21 +83,37 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                 return;
             }
 
-            // Clear existing programs
-            const { error: deleteError } = await supabase
+            // Use upsert instead of delete+insert to avoid RLS issues
+            // First, get existing programs
+            const { data: existingPrograms, error: fetchError } = await supabase
                 .from('programs')
-                .delete()
-                .neq('id', 0);
+                .select('id');
 
-            if (deleteError) throw deleteError;
+            if (fetchError) throw fetchError;
 
-            // Insert new programs
+            // Delete programs that are not in the new list
+            if (existingPrograms && existingPrograms.length > 0) {
+                const existingIds = existingPrograms.map(p => p.id);
+                const newIds = programsToSave.map(p => p.id);
+                const toDelete = existingIds.filter(id => !newIds.includes(id));
+
+                if (toDelete.length > 0) {
+                    const { error: deleteError } = await supabase
+                        .from('programs')
+                        .delete()
+                        .in('id', toDelete);
+
+                    if (deleteError) console.warn('Warning: Could not delete some programs:', deleteError);
+                }
+            }
+
+            // Insert or update programs
             if (programsToSave.length > 0) {
-                const { error: insertError } = await supabase
+                const { error: upsertError } = await supabase
                     .from('programs')
-                    .insert(programsToSave);
+                    .upsert(programsToSave, { onConflict: 'id' });
 
-                if (insertError) throw insertError;
+                if (upsertError) throw upsertError;
             }
 
             setPrograms(programsToSave);
@@ -142,19 +158,13 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                 return;
             }
 
-            const { error: deleteError } = await supabase
-                .from('platforms')
-                .delete()
-                .neq('id', '');
-
-            if (deleteError) throw deleteError;
-
+            // Use upsert instead of delete+insert to avoid RLS issues
             if (platformsToSave.length > 0) {
-                const { error: insertError } = await supabase
+                const { error: upsertError } = await supabase
                     .from('platforms')
-                    .insert(platformsToSave);
+                    .upsert(platformsToSave, { onConflict: 'id' });
 
-                if (insertError) throw insertError;
+                if (upsertError) throw upsertError;
             }
 
             setPlatforms(platformsToSave);
