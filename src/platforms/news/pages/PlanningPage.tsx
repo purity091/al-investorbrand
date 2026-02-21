@@ -347,6 +347,7 @@ export const PlanningPage = () => {
             }
 
             // Normalize and validate imported programs
+            // Default: quarterId = null (not distributed to quarters)
             const importedPrograms: Program[] = data.programs.map((p: any, index: number) => {
                 // Handle both camelCase and snake_case field names
                 const platform = platforms.find(pl => pl.id === p.platform) || platforms[0];
@@ -359,8 +360,8 @@ export const PlanningPage = () => {
                     platformName: p.platformName || p.platform_name || platform.nameAr,
                     platformColor: p.platformColor || p.platform_color || platform.color,
                     postsCount: p.postsCount || p.posts_count || 100,
-                    quarterId: p.quarterId || p.quarter_id || null,
-                    order: p.order || index,
+                    quarterId: null, // ✅ Default: not distributed (null)
+                    order: index,
                     description: p.description || p.description || '',
                     descriptionAr: p.descriptionAr || p.description_ar || '',
                     objectives: p.objectives || p.objectives || '',
