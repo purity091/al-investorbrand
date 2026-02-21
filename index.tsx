@@ -2,8 +2,11 @@ import React, { useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './src/context/AuthContext';
+import { DatabaseProvider } from './src/context/DatabaseContext';
 import { LoginPage } from './src/pages/LoginPage';
 import { Layout } from './src/components/Layout';
+import { AdminDashboard } from './src/pages/AdminDashboard';
+import { AdminVisibilityPage } from './src/pages/AdminVisibilityPage';
 import './src/index.css';
 
 // Platform Pages Imports
@@ -34,15 +37,28 @@ const App = () => {
     return (
         <BrowserRouter>
             <AuthProvider>
-                <Routes>
-                    <Route path="/login" element={<LoginPage />} />
+                <DatabaseProvider>
+                    <Routes>
+                        <Route path="/login" element={<LoginPage />} />
 
-                    {/* Protected Routes */}
-                    <Route path="/" element={
-                        <ProtectedRoute>
-                            <Layout />
-                        </ProtectedRoute>
-                    }>
+                        {/* Admin Routes */}
+                        <Route path="/admin" element={
+                            <ProtectedRoute>
+                                <AdminDashboard />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/admin/visibility" element={
+                            <ProtectedRoute>
+                                <AdminVisibilityPage />
+                            </ProtectedRoute>
+                        } />
+
+                        {/* Protected Routes */}
+                        <Route path="/" element={
+                            <ProtectedRoute>
+                                <Layout />
+                            </ProtectedRoute>
+                        }>
                         <Route index element={<RootRedirect />} />
 
                         {/* News Platform */}
@@ -56,6 +72,9 @@ const App = () => {
                             <Route path="messaging" element={<NewsPages.MessagingPage />} />
                             <Route path="social-content" element={<NewsPages.SocialContentPage />} />
                             <Route path="social" element={<NewsPages.SocialPage />} />
+                            <Route path="social-media" element={<NewsPages.SocialMediaPage />} />
+                            <Route path="podcast" element={<NewsPages.PodcastPage />} />
+                            <Route path="planning" element={<NewsPages.PlanningPage />} />
                             <Route path="regional" element={<NewsPages.RegionalPage />} />
                             <Route path="digital" element={<NewsPages.DigitalPage />} />
                             <Route path="apps" element={<NewsPages.AppsPage />} />
@@ -74,6 +93,9 @@ const App = () => {
                             <Route path="messaging" element={<AcademyPages.MessagingPage />} />
                             <Route path="social-content" element={<AcademyPages.SocialContentPage />} />
                             <Route path="social" element={<AcademyPages.SocialPage />} />
+                            <Route path="social-media" element={<AcademyPages.SocialMediaPage />} />
+                            <Route path="podcast" element={<AcademyPages.PodcastPage />} />
+                            <Route path="planning" element={<AcademyPages.PlanningPage />} />
                             <Route path="regional" element={<AcademyPages.RegionalPage />} />
                             <Route path="digital" element={<AcademyPages.DigitalPage />} />
                             <Route path="apps" element={<AcademyPages.AppsPage />} />
@@ -92,6 +114,9 @@ const App = () => {
                             <Route path="messaging" element={<RadarPages.MessagingPage />} />
                             <Route path="social-content" element={<RadarPages.SocialContentPage />} />
                             <Route path="social" element={<RadarPages.SocialPage />} />
+                            <Route path="social-media" element={<RadarPages.SocialMediaPage />} />
+                            <Route path="podcast" element={<RadarPages.PodcastPage />} />
+                            <Route path="planning" element={<RadarPages.PlanningPage />} />
                             <Route path="regional" element={<RadarPages.RegionalPage />} />
                             <Route path="digital" element={<RadarPages.DigitalPage />} />
                             <Route path="apps" element={<RadarPages.AppsPage />} />
@@ -110,6 +135,9 @@ const App = () => {
                             <Route path="messaging" element={<LaunchPages.MessagingPage />} />
                             <Route path="social-content" element={<LaunchPages.SocialContentPage />} />
                             <Route path="social" element={<LaunchPages.SocialPage />} />
+                            <Route path="social-media" element={<LaunchPages.SocialMediaPage />} />
+                            <Route path="podcast" element={<LaunchPages.PodcastPage />} />
+                            <Route path="planning" element={<LaunchPages.PlanningPage />} />
                             <Route path="regional" element={<LaunchPages.RegionalPage />} />
                             <Route path="digital" element={<LaunchPages.DigitalPage />} />
                             <Route path="apps" element={<LaunchPages.AppsPage />} />
@@ -128,6 +156,9 @@ const App = () => {
                             <Route path="messaging" element={<SaudiPages.MessagingPage />} />
                             <Route path="social-content" element={<SaudiPages.SocialContentPage />} />
                             <Route path="social" element={<SaudiPages.SocialPage />} />
+                            <Route path="social-media" element={<SaudiPages.SocialMediaPage />} />
+                            <Route path="podcast" element={<SaudiPages.PodcastPage />} />
+                            <Route path="planning" element={<SaudiPages.PlanningPage />} />
                             <Route path="regional" element={<SaudiPages.RegionalPage />} />
                             <Route path="digital" element={<SaudiPages.DigitalPage />} />
                             <Route path="apps" element={<SaudiPages.AppsPage />} />
@@ -137,6 +168,7 @@ const App = () => {
 
                     </Route>
                 </Routes>
+                </DatabaseProvider>
             </AuthProvider>
         </BrowserRouter>
     );

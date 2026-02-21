@@ -425,6 +425,15 @@ body {
 .block { display: block; }
 .inline-block { display: inline-block; }
 
+/* Scrollbar Hide Utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* FlexWrap */
 .flex-wrap { flex-wrap: wrap; }
 
