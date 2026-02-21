@@ -52,21 +52,35 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     const loadPrograms = async () => {
         try {
             setLoading(true);
-            
+
             if (!isSupabaseConfigured || !supabase) {
                 // Supabase not configured, use empty array
                 setPrograms([]);
                 setLoading(false);
                 return;
             }
-            
+
             const { data, error: fetchError } = await supabase
                 .from('programs')
                 .select('*')
                 .order('created_at', { ascending: true });
 
             if (fetchError) throw fetchError;
-            if (data) setPrograms(data as Program[]);
+            if (data) {
+                // Transform snake_case to camelCase
+                const transformed = data.map(item => ({
+                    id: item.id,
+                    title: item.title,
+                    titleAr: item.title_ar,
+                    platform: item.platform,
+                    platformName: item.platform_name,
+                    platformColor: item.platform_color,
+                    postsCount: item.posts_count,
+                    quarterId: item.quarter_id,
+                    order: item.order,
+                }));
+                setPrograms(transformed);
+            }
         } catch (err: any) {
             setError(err.message);
             console.error('Error loading programs:', err);
@@ -82,6 +96,19 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                 setPrograms(programsToSave);
                 return;
             }
+
+            // Transform camelCase to snake_case for database
+            const transformed = programsToSave.map(p => ({
+                id: p.id,
+                title: p.title,
+                title_ar: p.titleAr,
+                platform: p.platform,
+                platform_name: p.platformName,
+                platform_color: p.platformColor,
+                posts_count: p.postsCount,
+                quarter_id: p.quarterId,
+                order: p.order,
+            }));
 
             // Use upsert instead of delete+insert to avoid RLS issues
             // First, get existing programs
@@ -108,10 +135,10 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             }
 
             // Insert or update programs
-            if (programsToSave.length > 0) {
+            if (transformed.length > 0) {
                 const { error: upsertError } = await supabase
                     .from('programs')
-                    .upsert(programsToSave, { onConflict: 'id' });
+                    .upsert(transformed, { onConflict: 'id' });
 
                 if (upsertError) throw upsertError;
             }
@@ -130,7 +157,7 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                 setLoading(false);
                 return [];
             }
-            
+
             const { data, error: fetchError } = await supabase
                 .from('platforms')
                 .select('*')
@@ -138,8 +165,16 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
             if (fetchError) throw fetchError;
             if (data) {
-                setPlatforms(data as Platform[]);
-                return data as Platform[];
+                // Transform snake_case to camelCase
+                const transformed = data.map(item => ({
+                    id: item.id,
+                    name: item.name,
+                    nameAr: item.name_ar,
+                    color: item.color,
+                    enabled: item.enabled,
+                }));
+                setPlatforms(transformed);
+                return transformed;
             }
             return [];
         } catch (err: any) {
@@ -158,11 +193,20 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                 return;
             }
 
+            // Transform camelCase to snake_case for database
+            const transformed = platformsToSave.map(p => ({
+                id: p.id,
+                name: p.name,
+                name_ar: p.nameAr,
+                color: p.color,
+                enabled: p.enabled,
+            }));
+
             // Use upsert instead of delete+insert to avoid RLS issues
-            if (platformsToSave.length > 0) {
+            if (transformed.length > 0) {
                 const { error: upsertError } = await supabase
                     .from('platforms')
-                    .upsert(platformsToSave, { onConflict: 'id' });
+                    .upsert(transformed, { onConflict: 'id' });
 
                 if (upsertError) throw upsertError;
             }

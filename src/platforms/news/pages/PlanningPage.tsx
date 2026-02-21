@@ -281,8 +281,23 @@ export const PlanningPage = () => {
     };
 
     const exportToJSON = () => {
-        const exportData: ImportExportData = {
-            programs: localPrograms,
+        // Ensure clean data structure for export
+        const exportData = {
+            programs: localPrograms.map(p => ({
+                id: p.id,
+                title: p.title,
+                titleAr: p.titleAr,
+                platform: p.platform,
+                platformName: p.platformName,
+                platformColor: p.platformColor,
+                postsCount: p.postsCount,
+                quarterId: p.quarterId,
+                order: p.order,
+                description: p.description,
+                descriptionAr: p.descriptionAr,
+                objectives: p.objectives,
+                objectivesAr: p.objectivesAr,
+            })),
             exportDate: new Date().toISOString(),
             version: '1.0',
         };
@@ -331,23 +346,50 @@ export const PlanningPage = () => {
                 return;
             }
 
-            const importedPrograms: Program[] = data.programs.map((p: Program, index: number) => ({
-                ...p,
-                id: p.id || Date.now() + index,
-                order: p.order || index,
-            }));
+            // Normalize and validate imported programs
+            const importedPrograms: Program[] = data.programs.map((p: any, index: number) => {
+                // Handle both camelCase and snake_case field names
+                const platform = platforms.find(pl => pl.id === p.platform) || platforms[0];
+                
+                return {
+                    id: p.id || (Date.now() + index),
+                    title: p.title || p.title || '',
+                    titleAr: p.titleAr || p.title_ar || '',
+                    platform: p.platform || 'twitter',
+                    platformName: p.platformName || p.platform_name || platform.nameAr,
+                    platformColor: p.platformColor || p.platform_color || platform.color,
+                    postsCount: p.postsCount || p.posts_count || 100,
+                    quarterId: p.quarterId || p.quarter_id || null,
+                    order: p.order || index,
+                    description: p.description || p.description || '',
+                    descriptionAr: p.descriptionAr || p.description_ar || '',
+                    objectives: p.objectives || p.objectives || '',
+                    objectivesAr: p.objectivesAr || p.objectives_ar || '',
+                };
+            });
 
-            setLocalPrograms(importedPrograms);
-            autoSaveToDatabase(importedPrograms);
+            // Validate required fields
+            const invalidPrograms = importedPrograms.filter(p => !p.title || !p.titleAr);
+            if (invalidPrograms.length > 0) {
+                setImportError(`تحذير: ${invalidPrograms.length} برنامج لا يحتوي على عنوان صحيح. تم تخطيها.`);
+                const validPrograms = importedPrograms.filter(p => p.title && p.titleAr);
+                setLocalPrograms(validPrograms);
+                autoSaveToDatabase(validPrograms);
+                setImportSuccess(`تم استيراد ${validPrograms.length} برنامج بنجاح!`);
+            } else {
+                setLocalPrograms(importedPrograms);
+                autoSaveToDatabase(importedPrograms);
+                setImportSuccess(`تم استيراد ${importedPrograms.length} برنامج بنجاح!`);
+            }
 
-            setImportSuccess(`تم استيراد ${importedPrograms.length} برنامج بنجاح!`);
             setTimeout(() => {
                 setImportSuccess('');
                 setShowImportExport(false);
                 setJsonInput('');
             }, 2000);
-        } catch (error) {
-            setImportError('خطأ في قراءة ملف JSON. تأكد من صحة التنسيق.');
+        } catch (error: any) {
+            console.error('Import error:', error);
+            setImportError(`خطأ في قراءة ملف JSON: ${error.message}. تأكد من صحة التنسيق.`);
         }
     };
 
