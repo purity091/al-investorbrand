@@ -111,8 +111,11 @@ export const PlanningPage = () => {
             await savePrograms(programsToSave);
             setSaveStatus('saved');
             setTimeout(() => setSaveStatus('idle'), 2000);
-        } catch (err) {
+        } catch (err: any) {
             setSaveStatus('error');
+            console.error('Save error:', err);
+            // Show error to user
+            setImportError(`فشل الحفظ في قاعدة البيانات: ${err.message || err}`);
         }
     };
 
@@ -239,9 +242,17 @@ export const PlanningPage = () => {
         const programId = parseInt(e.dataTransfer.getData('programId'));
 
         if (programId) {
+            // ✅ Get max order and add 1 to prevent duplicates
+            const maxOrder = Math.max(
+                ...localPrograms
+                    .filter(prog => prog.quarterId === quarterId)
+                    .map(p => p.order),
+                -1
+            );
+            
             const updated = localPrograms.map(p =>
                 p.id === programId
-                    ? { ...p, quarterId, order: localPrograms.filter(prog => prog.quarterId === quarterId).length }
+                    ? { ...p, quarterId, order: maxOrder + 1 }
                     : p
             );
             setLocalPrograms(updated);
@@ -256,9 +267,17 @@ export const PlanningPage = () => {
         const programId = parseInt(e.dataTransfer.getData('programId'));
 
         if (programId) {
+            // ✅ Get max order and add 1 to prevent duplicates
+            const maxOrder = Math.max(
+                ...localPrograms
+                    .filter(prog => prog.quarterId === null)
+                    .map(p => p.order),
+                -1
+            );
+            
             const updated = localPrograms.map(p =>
                 p.id === programId
-                    ? { ...p, quarterId: null, order: localPrograms.filter(prog => prog.quarterId === null).length }
+                    ? { ...p, quarterId: null, order: maxOrder + 1 }
                     : p
             );
             setLocalPrograms(updated);
@@ -353,7 +372,8 @@ export const PlanningPage = () => {
                 const platform = platforms.find(pl => pl.id === p.platform) || platforms[0];
                 
                 return {
-                    id: p.id || (Date.now() + index),
+                    // ✅ Generate unique ID to prevent duplicates
+                    id: p.id ? Date.now() + Math.random() * 1000 : Date.now() + index,
                     title: p.title || p.title || '',
                     titleAr: p.titleAr || p.title_ar || '',
                     platform: p.platform || 'twitter',
@@ -361,11 +381,11 @@ export const PlanningPage = () => {
                     platformColor: p.platformColor || p.platform_color || platform.color,
                     postsCount: p.postsCount || p.posts_count || 100,
                     quarterId: null, // ✅ Default: not distributed (null)
-                    order: localPrograms.filter(prog => prog.quarterId === null).length, // Add to end of unassigned
-                    description: p.description || p.description || '',
-                    descriptionAr: p.descriptionAr || p.description_ar || '',
-                    objectives: p.objectives || p.objectives || '',
-                    objectivesAr: p.objectivesAr || p.objectives_ar || '',
+                    order: localPrograms.filter(prog => prog.quarterId === null).length + index, // Add to end of unassigned
+                    description: typeof p.description === 'string' ? p.description : '',
+                    descriptionAr: typeof p.descriptionAr === 'string' ? p.descriptionAr : '',
+                    objectives: typeof p.objectives === 'string' ? p.objectives : '',
+                    objectivesAr: typeof p.objectivesAr === 'string' ? p.objectivesAr : '',
                 };
             });
 
@@ -401,9 +421,17 @@ export const PlanningPage = () => {
 
         const reader = new FileReader();
         reader.onload = (event) => {
-            const content = event.target?.result as string;
-            setJsonInput(content);
-            importFromJSON(content);
+            try {
+                const content = event.target?.result as string;
+                setJsonInput(content);
+                importFromJSON(content);
+            } catch (error: any) {
+                console.error('File upload error:', error);
+                setImportError(`خطأ في قراءة الملف: ${error.message}`);
+            }
+        };
+        reader.onerror = () => {
+            setImportError('خطأ في قراءة الملف. تأكد من أن الملف صالح.');
         };
         reader.readAsText(file);
     };
