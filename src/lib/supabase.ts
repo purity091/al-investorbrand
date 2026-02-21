@@ -7,22 +7,31 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 const isSupabaseConfigured = supabaseUrl && supabaseAnonKey &&
     (supabaseUrl.startsWith('https://') || supabaseUrl.startsWith('http://'));
 
-// Custom lock to prevent Navigator LockManager timeouts in development/Strict Mode
-const customLock = async <R>(name: string, acquireTimeout: number, fn: () => Promise<R>): Promise<R> => {
-    return await fn();
+// Simple mutex lock to prevent Navigator LockManager timeouts
+let lockHeld = false;
+const simpleLock = async <R>(name: string, acquireTimeout: number, fn: () => Promise<R>): Promise<R> => {
+    // Wait for existing lock to release (with timeout)
+    const start = Date.now();
+    while (lockHeld && Date.now() - start < acquireTimeout) {
+        await new Promise(resolve => setTimeout(resolve, 50));
+    }
+    lockHeld = true;
+    try {
+        return await fn();
+    } finally {
+        lockHeld = false;
+    }
 };
 
 export const supabase = isSupabaseConfigured
     ? createClient(supabaseUrl, supabaseAnonKey, {
         auth: {
-            lock: customLock,
+            lock: simpleLock,
             persistSession: true,
             autoRefreshToken: true,
             detectSessionInUrl: true,
             storage: window.localStorage,
-            storageKey: 'brand-auth-token',
-            // Extend session lifetime to 90 days (7776000 seconds)
-            expiresIn: 7776000,
+            flowType: 'implicit',
         }
     })
     : null;

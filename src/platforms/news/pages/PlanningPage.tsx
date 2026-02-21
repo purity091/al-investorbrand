@@ -45,12 +45,16 @@ interface ImportExportData {
 export const PlanningPage = () => {
     const { programs, savePrograms, loading, error, isSupabaseConfigured } = useDatabase();
 
+    const [currentYear, setCurrentYear] = useState(2026);
+
     const quarters: Quarter[] = [
         { id: 1, name: 'Q1', nameAr: 'الربع الأول', period: 'يناير - مارس', color: 'text-[#00E1C1]', bgColor: 'bg-[#00E1C1]/10', borderColor: 'border-[#00E1C1]/50' },
         { id: 2, name: 'Q2', nameAr: 'الربع الثاني', period: 'أبريل - يونيو', color: 'text-[#F59E0B]', bgColor: 'bg-[#F59E0B]/10', borderColor: 'border-[#F59E0B]/50' },
         { id: 3, name: 'Q3', nameAr: 'الربع الثالث', period: 'يوليو - سبتمبر', color: 'text-[#EF4444]', bgColor: 'bg-[#EF4444]/10', borderColor: 'border-[#EF4444]/50' },
         { id: 4, name: 'Q4', nameAr: 'الربع الرابع', period: 'أكتوبر - ديسمبر', color: 'text-[#3B82F6]', bgColor: 'bg-[#3B82F6]/10', borderColor: 'border-[#3B82F6]/50' },
     ];
+
+    const years = Array.from({ length: 10 }, (_, i) => 2025 + i);
 
     const platforms: Platform[] = [
         { id: 'twitter', name: 'X (Twitter)', nameAr: 'إكس (تويتر)', color: 'bg-[#1DA1F2]' },
@@ -659,9 +663,17 @@ export const PlanningPage = () => {
             <div className="bg-white rounded-xl border border-slate-200 overflow-hidden mb-4">
                 {/* Header */}
                 <div className="bg-[#0D1137] text-white px-4 py-3 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
                         <Database size={18} />
-                        <span className="font-bold text-sm">التخطيط السنوي 2026</span>
+                        <select
+                            value={currentYear}
+                            onChange={(e) => setCurrentYear(Number(e.target.value))}
+                            className="bg-white/10 text-white px-3 py-1.5 rounded-lg font-bold text-sm focus:outline-none focus:ring-2 focus:ring-[#00E1C1] cursor-pointer hover:bg-white/20 transition-all"
+                        >
+                            {years.map(year => (
+                                <option key={year} value={year} className="text-[#0D1137]">{year}</option>
+                            ))}
+                        </select>
                     </div>
                     <div className="flex items-center gap-2">
                         <button
@@ -695,155 +707,146 @@ export const PlanningPage = () => {
                     </div>
                 </div>
 
-                {/* Quarters Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-4 gap-4 p-4 bg-slate-50 border-t border-slate-200">
-                    {quarters.map((quarter) => {
-                        const quarterPrograms = getProgramsByQuarter(quarter.id);
-                        const isDragOver = dragOverQuarter === quarter.id;
+                {/* Main Content Layout: Right = Quarters, Center = Year & Unassigned */}
+                <div className="flex flex-col lg:flex-row gap-4 p-4 bg-slate-50 border-t border-slate-200">
+                    {/* Right Side: Quarters */}
+                    <div className="lg:w-2/3 flex flex-col gap-4">
+                        <div className="text-sm font-bold text-[#0D1137] mb-2 flex items-center gap-2">
+                            <Target size={16} />
+                            <span>الأرباع السنوية</span>
+                        </div>
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                            {quarters.map((quarter) => {
+                                const quarterPrograms = getProgramsByQuarter(quarter.id);
+                                const isDragOver = dragOverQuarter === quarter.id;
 
-                        return (
-                            <div
-                                key={quarter.id}
-                                onDragOver={(e) => handleDragOver(e, quarter.id)}
-                                onDragLeave={handleDragLeave}
-                                onDrop={(e) => handleDrop(e, quarter.id)}
-                                className={`border border-slate-200 rounded-xl transition-all duration-200 min-h-[240px] shadow-sm flex flex-col overflow-hidden ${isDragOver ? `${quarter.bgColor} scale-[1.01] shadow-md ring-2 ring-[#00E1C1]` : 'bg-white'
-                                    }`}
-                            >
-                                {/* Quarter Header */}
-                                <div className={`px-3 py-2.5 ${quarter.bgColor} border-b ${quarter.borderColor}`}>
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                            <span className={`text-xl font-black ${quarter.color}`}>{quarter.name}</span>
-                                            <span className="text-xs text-slate-500 bg-white px-2 py-1 rounded-full font-bold">
-                                                {quarterPrograms.length}
-                                            </span>
-                                        </div>
-                                        <div className="text-right">
-                                            <div className="text-sm font-bold text-[#0D1137]">{quarter.nameAr}</div>
-                                            <div className="text-xs text-slate-500">{quarter.period}</div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Drop Zone */}
-                                <div className="p-2 space-y-2 min-h-[160px]">
-                                    {quarterPrograms.length === 0 ? (
-                                        <div className="flex flex-col items-center justify-center h-32 text-slate-400 border-2 border-dashed border-slate-200 rounded-lg bg-slate-50">
-                                            <Target size={24} className="mb-2 opacity-40" />
-                                            <span className="text-sm text-center">اسحب البرامج هنا</span>
-                                        </div>
-                                    ) : (
-                                        quarterPrograms.map((program) => (
-                                            <div
-                                                key={program.id}
-                                                onClick={() => openProgramModal(program)}
-                                                draggable
-                                                onDragStart={(e) => handleDragStart(e, program.id)}
-                                                className={`bg-white rounded-lg p-2.5 border-2 cursor-pointer active:cursor-grabbing transition-all hover:shadow-md hover:scale-[1.02] ${draggedProgram === program.id ? 'opacity-40 scale-95' : 'opacity-100'
-                                                    } border-slate-200`}
-                                            >
-                                                <div className="flex items-start gap-2">
-                                                    <div className="mt-0.5 text-slate-300 shrink-0">
-                                                        <GripVertical size={14} />
-                                                    </div>
-                                                    <div className={`${program.platformColor} w-7 h-7 rounded-lg flex items-center justify-center text-white shrink-0`}>
-                                                        <Calendar size={14} />
-                                                    </div>
-                                                    <div className="flex-1 min-w-0">
-                                                        <div className="font-bold text-[#0D1137] text-sm truncate leading-tight">
-                                                            {program.titleAr}
-                                                        </div>
-                                                        <div className="flex items-center gap-2 mt-1">
-                                                            <span className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">
-                                                                {program.platformName.split(' ')[0]}
-                                                            </span>
-                                                            <span className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded font-bold">
-                                                                {program.postsCount} منشور
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                    <button
-                                                        onClick={(e) => { e.stopPropagation(); openEditModal(program); }}
-                                                        className="p-1.5 hover:bg-blue-50 text-blue-600 rounded-lg transition-colors shrink-0"
-                                                        title="تعديل البرنامج"
-                                                    >
-                                                        <Settings size={14} />
-                                                    </button>
-                                                    <button onClick={(e) => { e.stopPropagation(); deleteProgram(program.id); }} className="p-1.5 hover:bg-red-50 text-red-500 rounded-lg transition-colors shrink-0">
-                                                        <Trash2 size={14} />
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        ))
-                                    )}
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
-            </div>
-
-            {/* Unassigned Programs */}
-            <div onDragOver={(e) => e.preventDefault()} onDrop={handleDropUnassigned} className="bg-white rounded-xl border border-slate-200 p-4">
-                <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                        <Clock size={16} className="text-[#F59E0B]" />
-                        <h3 className="text-sm font-bold text-[#0D1137]">البرامج غير الموزعة</h3>
-                    </div>
-                    <span className="text-xs font-bold text-[#F59E0B] bg-[#F59E0B]/10 px-3 py-1 rounded-full">
-                        {getProgramsByQuarter(null).length}
-                    </span>
-                </div>
-
-                {getProgramsByQuarter(null).length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6 gap-3">
-                        {getProgramsByQuarter(null).map((program) => (
-                            <div
-                                key={program.id}
-                                onClick={() => openProgramModal(program)}
-                                draggable
-                                onDragStart={(e) => handleDragStart(e, program.id)}
-                                className={`bg-white rounded-lg p-2.5 border-2 cursor-pointer active:cursor-grabbing transition-all hover:shadow-md hover:scale-[1.02] ${draggedProgram === program.id ? 'opacity-40 scale-95' : 'opacity-100'
-                                    } border-slate-200`}
-                            >
-                                <div className="flex items-start gap-2">
-                                    <div className="mt-0.5 text-slate-300 shrink-0">
-                                        <GripVertical size={14} />
-                                    </div>
-                                    <div className={`${program.platformColor} w-7 h-7 rounded-lg flex items-center justify-center text-white shrink-0`}>
-                                        <Calendar size={14} />
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <div className="font-bold text-[#0D1137] text-sm truncate leading-tight">
-                                            {program.titleAr}
-                                        </div>
-                                        <div className="flex items-center gap-2 mt-1">
-                                            <span className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded font-bold">
-                                                {program.postsCount}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <button
-                                        onClick={(e) => { e.stopPropagation(); openEditModal(program); }}
-                                        className="p-1.5 hover:bg-blue-50 text-blue-600 rounded-lg transition-colors shrink-0"
-                                        title="تعديل البرنامج"
+                                return (
+                                    <div
+                                        key={quarter.id}
+                                        onDragOver={(e) => handleDragOver(e, quarter.id)}
+                                        onDragLeave={handleDragLeave}
+                                        onDrop={(e) => handleDrop(e, quarter.id)}
+                                        className={`border border-slate-200 rounded-xl transition-all duration-200 shadow-sm flex flex-col overflow-hidden ${isDragOver ? `${quarter.bgColor} scale-[1.01] shadow-md ring-2 ring-[#00E1C1]` : 'bg-white'
+                                            }`}
                                     >
-                                        <Settings size={14} />
-                                    </button>
-                                    <button onClick={(e) => { e.stopPropagation(); deleteProgram(program.id); }} className="p-1.5 hover:bg-red-50 text-red-500 rounded-lg transition-colors shrink-0">
-                                        <Trash2 size={14} />
-                                    </button>
+                                        {/* Quarter Header */}
+                                        <div className={`px-2 py-2 ${quarter.bgColor} border-b ${quarter.borderColor}`}>
+                                            <div className="text-center">
+                                                <span className={`text-lg font-black ${quarter.color}`}>{quarter.name}</span>
+                                                <div className="text-xs text-slate-500 font-bold mt-0.5">{quarter.nameAr}</div>
+                                                <div className="text-[10px] text-slate-400">{quarter.period}</div>
+                                            </div>
+                                        </div>
+
+                                        {/* Drop Zone */}
+                                        <div className="p-1.5 space-y-1.5 min-h-[180px]">
+                                            {quarterPrograms.length === 0 ? (
+                                                <div className="flex flex-col items-center justify-center h-28 text-slate-400 border-2 border-dashed border-slate-200 rounded-lg bg-slate-50">
+                                                    <Target size={18} className="mb-1 opacity-40" />
+                                                    <span className="text-[10px] text-center">اسحب البرامج</span>
+                                                </div>
+                                            ) : (
+                                                quarterPrograms.map((program) => (
+                                                    <div
+                                                        key={program.id}
+                                                        onClick={() => openProgramModal(program)}
+                                                        draggable
+                                                        onDragStart={(e) => handleDragStart(e, program.id)}
+                                                        className={`bg-white rounded-lg p-2 border-2 cursor-pointer active:cursor-grabbing transition-all hover:shadow-md hover:scale-[1.02] ${draggedProgram === program.id ? 'opacity-40 scale-95' : 'opacity-100'
+                                                            } border-slate-200`}
+                                                    >
+                                                        <div className="flex items-start gap-1.5">
+                                                            <div className={`${program.platformColor} w-6 h-6 rounded flex items-center justify-center text-white shrink-0`}>
+                                                                <Calendar size={12} />
+                                                            </div>
+                                                            <div className="flex-1 min-w-0">
+                                                                <div className="font-bold text-[#0D1137] text-[11px] truncate leading-tight">
+                                                                    {program.titleAr}
+                                                                </div>
+                                                                <div className="flex items-center gap-1 mt-0.5">
+                                                                    <span className="text-[9px] text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded font-bold">
+                                                                        {program.postsCount}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ))
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    {/* Center/Left Side: Unassigned Programs */}
+                    <div className="lg:w-1/3 flex flex-col">
+                        <div onDragOver={(e) => e.preventDefault()} onDrop={handleDropUnassigned} className="bg-white rounded-xl border-2 border-[#F59E0B]/30 p-3 flex-1">
+                            <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
+                                <div className="flex items-center gap-2">
+                                    <Clock size={16} className="text-[#F59E0B]" />
+                                    <h3 className="text-sm font-bold text-[#0D1137]">البرامج غير الموزعة</h3>
                                 </div>
+                                <span className="text-xs font-bold text-[#F59E0B] bg-[#F59E0B]/10 px-2.5 py-1 rounded-full">
+                                    {getProgramsByQuarter(null).length}
+                                </span>
                             </div>
-                        ))}
+
+                            {getProgramsByQuarter(null).length > 0 ? (
+                                <div className="space-y-2 max-h-[500px] overflow-y-auto">
+                                    {getProgramsByQuarter(null).map((program) => (
+                                        <div
+                                            key={program.id}
+                                            onClick={() => openProgramModal(program)}
+                                            draggable
+                                            onDragStart={(e) => handleDragStart(e, program.id)}
+                                            className={`bg-white rounded-lg p-2.5 border-2 cursor-pointer active:cursor-grabbing transition-all hover:shadow-md hover:scale-[1.02] ${draggedProgram === program.id ? 'opacity-40 scale-95' : 'opacity-100'
+                                                } border-slate-200`}
+                                        >
+                                            <div className="flex items-start gap-2">
+                                                <div className="mt-0.5 text-slate-300 shrink-0">
+                                                    <GripVertical size={14} />
+                                                </div>
+                                                <div className={`${program.platformColor} w-8 h-8 rounded-lg flex items-center justify-center text-white shrink-0`}>
+                                                    <Calendar size={16} />
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="font-bold text-[#0D1137] text-sm truncate leading-tight">
+                                                        {program.titleAr}
+                                                    </div>
+                                                    <div className="flex items-center gap-2 mt-1">
+                                                        <span className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded font-bold">
+                                                            {program.platformName.split(' ')[0]}
+                                                        </span>
+                                                        <span className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded font-bold">
+                                                            {program.postsCount} منشور
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); openEditModal(program); }}
+                                                    className="p-1.5 hover:bg-blue-50 text-blue-600 rounded-lg transition-colors shrink-0"
+                                                    title="تعديل"
+                                                >
+                                                    <Settings size={14} />
+                                                </button>
+                                                <button onClick={(e) => { e.stopPropagation(); deleteProgram(program.id); }} className="p-1.5 hover:bg-red-50 text-red-500 rounded-lg transition-colors shrink-0">
+                                                    <Trash2 size={14} />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="flex flex-col items-center justify-center py-12 text-slate-400">
+                                    <Check size={24} className="mb-2 opacity-30" />
+                                    <p className="text-sm">جميع البرامج موزعة</p>
+                                </div>
+                            )}
+                        </div>
                     </div>
-                ) : (
-                    <div className="flex flex-col items-center justify-center py-6 text-slate-400">
-                        <Check size={20} className="mb-2 opacity-30" />
-                        <p className="text-sm">جميع البرامج موزعة</p>
-                    </div>
-                )}
+                </div>
             </div>
 
             {/* Import/Export Modal with AI Template */}
