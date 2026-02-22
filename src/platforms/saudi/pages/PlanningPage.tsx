@@ -54,6 +54,8 @@ export const PlanningPage = () => {
         { id: 4, name: 'Q4', nameAr: 'الربع الرابع', period: 'أكتوبر - ديسمبر', color: 'text-[#3B82F6]', bgColor: 'bg-[#3B82F6]/10', borderColor: 'border-[#3B82F6]/50' },
     ];
 
+    const years = Array.from({ length: 10 }, (_, i) => 2025 + i);
+
     const platforms: Platform[] = [
         { id: 'twitter', name: 'X (Twitter)', nameAr: 'إكس (تويتر)', color: 'bg-[#1DA1F2]' },
         { id: 'linkedin', name: 'LinkedIn', nameAr: 'لينكد إن', color: 'bg-[#0077B5]' },
@@ -64,8 +66,6 @@ export const PlanningPage = () => {
         { id: 'facebook', name: 'Facebook', nameAr: 'فيسبوك', color: 'bg-[#1877F2]' },
         { id: 'snapchat', name: 'Snapchat', nameAr: 'سناب شات', color: 'bg-[#FFFC00]' },
     ];
-
-    const years = Array.from({ length: 10 }, (_, i) => 2025 + i);
 
     const [localPrograms, setLocalPrograms] = useState<Program[]>([]);
     const [showAddProgram, setShowAddProgram] = useState(false);
@@ -115,8 +115,11 @@ export const PlanningPage = () => {
             await savePrograms(programsToSave);
             setSaveStatus('saved');
             setTimeout(() => setSaveStatus('idle'), 2000);
-        } catch (err) {
+        } catch (err: any) {
             setSaveStatus('error');
+            console.error('Save error:', err);
+            // Show error to user
+            setImportError(`فشل الحفظ في قاعدة البيانات: ${err.message || err}`);
         }
     };
 
@@ -243,9 +246,17 @@ export const PlanningPage = () => {
         const programId = parseInt(e.dataTransfer.getData('programId'));
 
         if (programId) {
+            // ✅ Get max order and add 1 to prevent duplicates
+            const maxOrder = Math.max(
+                ...localPrograms
+                    .filter(prog => prog.quarterId === quarterId)
+                    .map(p => p.order),
+                -1
+            );
+
             const updated = localPrograms.map(p =>
                 p.id === programId
-                    ? { ...p, quarterId, order: localPrograms.filter(prog => prog.quarterId === quarterId).length }
+                    ? { ...p, quarterId, order: maxOrder + 1 }
                     : p
             );
             setLocalPrograms(updated);
@@ -260,9 +271,17 @@ export const PlanningPage = () => {
         const programId = parseInt(e.dataTransfer.getData('programId'));
 
         if (programId) {
+            // ✅ Get max order and add 1 to prevent duplicates
+            const maxOrder = Math.max(
+                ...localPrograms
+                    .filter(prog => prog.quarterId === null)
+                    .map(p => p.order),
+                -1
+            );
+
             const updated = localPrograms.map(p =>
                 p.id === programId
-                    ? { ...p, quarterId: null, order: localPrograms.filter(prog => prog.quarterId === null).length }
+                    ? { ...p, quarterId: null, order: maxOrder + 1 }
                     : p
             );
             setLocalPrograms(updated);
@@ -285,8 +304,23 @@ export const PlanningPage = () => {
     };
 
     const exportToJSON = () => {
-        const exportData: ImportExportData = {
-            programs: localPrograms,
+        // Ensure clean data structure for export
+        const exportData = {
+            programs: localPrograms.map(p => ({
+                id: p.id,
+                title: p.title,
+                titleAr: p.titleAr,
+                platform: p.platform,
+                platformName: p.platformName,
+                platformColor: p.platformColor,
+                postsCount: p.postsCount,
+                quarterId: p.quarterId,
+                order: p.order,
+                description: p.description,
+                descriptionAr: p.descriptionAr,
+                objectives: p.objectives,
+                objectivesAr: p.objectivesAr,
+            })),
             exportDate: new Date().toISOString(),
             version: '1.0',
         };
@@ -335,23 +369,53 @@ export const PlanningPage = () => {
                 return;
             }
 
-            const importedPrograms: Program[] = data.programs.map((p: Program, index: number) => ({
-                ...p,
-                id: p.id || Date.now() + index,
-                order: p.order || index,
-            }));
+            // Normalize and validate imported programs
+            // Default: quarterId = null (not distributed to quarters)
+            const importedPrograms: Program[] = data.programs.map((p: any, index: number) => {
+                // Handle both camelCase and snake_case field names
+                const platform = platforms.find(pl => pl.id === p.platform) || platforms[0];
 
-            setLocalPrograms(importedPrograms);
-            autoSaveToDatabase(importedPrograms);
+                return {
+                    // ✅ Generate unique ID to prevent duplicates
+                    id: Date.now() + index,
+                    title: p.title || p.title || '',
+                    titleAr: p.titleAr || p.title_ar || '',
+                    platform: p.platform || 'twitter',
+                    platformName: p.platformName || p.platform_name || platform.nameAr,
+                    platformColor: p.platformColor || p.platform_color || platform.color,
+                    postsCount: p.postsCount || p.posts_count || 100,
+                    quarterId: null, // ✅ Default: not distributed (null)
+                    order: localPrograms.filter(prog => prog.quarterId === null).length + index, // Add to end of unassigned
+                    description: typeof p.description === 'string' ? p.description : '',
+                    descriptionAr: typeof p.descriptionAr === 'string' ? p.descriptionAr : '',
+                    objectives: typeof p.objectives === 'string' ? p.objectives : '',
+                    objectivesAr: typeof p.objectivesAr === 'string' ? p.objectivesAr : '',
+                };
+            });
 
-            setImportSuccess(`تم استيراد ${importedPrograms.length} برنامج بنجاح!`);
+            // Validate required fields
+            const invalidPrograms = importedPrograms.filter(p => !p.title || !p.titleAr);
+            if (invalidPrograms.length > 0) {
+                setImportError(`تحذير: ${invalidPrograms.length} برنامج لا يحتوي على عنوان صحيح. تم تخطيها.`);
+            }
+
+            const validPrograms = importedPrograms.filter(p => p.title && p.titleAr);
+
+            // ✅ Merge with existing programs (don't delete old ones)
+            const updatedPrograms = [...localPrograms, ...validPrograms];
+
+            setLocalPrograms(updatedPrograms);
+            autoSaveToDatabase(updatedPrograms);
+            setImportSuccess(`تم استيراد ${validPrograms.length} برنامج بنجاح! إجمالي البرامج: ${updatedPrograms.length}`);
+
             setTimeout(() => {
                 setImportSuccess('');
                 setShowImportExport(false);
                 setJsonInput('');
             }, 2000);
-        } catch (error) {
-            setImportError('خطأ في قراءة ملف JSON. تأكد من صحة التنسيق.');
+        } catch (error: any) {
+            console.error('Import error:', error);
+            setImportError(`خطأ في قراءة ملف JSON: ${error.message}. تأكد من صحة التنسيق.`);
         }
     };
 
@@ -361,9 +425,17 @@ export const PlanningPage = () => {
 
         const reader = new FileReader();
         reader.onload = (event) => {
-            const content = event.target?.result as string;
-            setJsonInput(content);
-            importFromJSON(content);
+            try {
+                const content = event.target?.result as string;
+                setJsonInput(content);
+                importFromJSON(content);
+            } catch (error: any) {
+                console.error('File upload error:', error);
+                setImportError(`خطأ في قراءة الملف: ${error.message}`);
+            }
+        };
+        reader.onerror = () => {
+            setImportError('خطأ في قراءة الملف. تأكد من أن الملف صالح.');
         };
         reader.readAsText(file);
     };
@@ -395,6 +467,10 @@ export const PlanningPage = () => {
                             postsCount: postsCount,
                             quarterId: null,
                             order: index,
+                            description: '',
+                            descriptionAr: '',
+                            objectives: '',
+                            objectivesAr: '',
                         });
                     }
                 }
@@ -631,7 +707,7 @@ export const PlanningPage = () => {
                     </div>
                 </div>
 
-                {/* Main Content Layout: Right = Quarters, Center = Unassigned */}
+                {/* Main Content Layout: Right = Quarters, Center = Year & Unassigned */}
                 <div className="flex flex-col lg:flex-row gap-4 p-4 bg-slate-50 border-t border-slate-200">
                     {/* Right Side: Quarters */}
                     <div className="lg:w-2/3 flex flex-col gap-4">
@@ -772,6 +848,7 @@ export const PlanningPage = () => {
                     </div>
                 </div>
             </div>
+
             {/* Import/Export Modal with AI Template */}
             {showImportExport && (
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">

@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { AuthProvider, useAuth } from './src/context/AuthContext';
 import { DatabaseProvider } from './src/context/DatabaseContext';
 import { LoginPage } from './src/pages/LoginPage';
+import { DashboardPage } from './src/pages/DashboardPage';
 import { Layout } from './src/components/Layout';
 import { AdminDashboard } from './src/pages/AdminDashboard';
 import { AdminVisibilityPage } from './src/pages/AdminVisibilityPage';
@@ -59,9 +60,9 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     return <>{children}</>;
 };
 
-// Redirect root to default platform
+// Redirect root to dashboard
 const RootRedirect = () => {
-    return <Navigate to="/news" replace />;
+    return <Navigate to="/dashboard" replace />;
 }
 
 const App = () => {
@@ -81,6 +82,11 @@ const App = () => {
                         <Route path="/admin/visibility" element={
                             <ProtectedRoute>
                                 <AdminVisibilityPage />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/dashboard" element={
+                            <ProtectedRoute>
+                                <DashboardPage />
                             </ProtectedRoute>
                         } />
 
