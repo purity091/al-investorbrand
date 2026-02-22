@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     TrendingUp, Target, Calendar, Clock, BarChart3,
@@ -12,7 +12,7 @@ const DashboardPage = () => {
     const { programs, loading, error, isSupabaseConfigured } = useDatabase();
     const [darkMode, setDarkMode] = useState(false);
 
-    // Platform configuration
+    // Platform configuration - هذه منصات النظام الخمسة
     const platformsConfig = [
         { id: 'news', name: 'الأخبار', nameEn: 'News', color: '#00E1C1', icon: '📰' },
         { id: 'academy', name: 'الأكاديمية', nameEn: 'Academy', color: '#F59E0B', icon: '🎓' },
@@ -20,6 +20,9 @@ const DashboardPage = () => {
         { id: 'launch', name: 'الإطلاق', nameEn: 'Launch', color: '#3B82F6', icon: '🚀' },
         { id: 'saudi', name: 'السعودية', nameEn: 'Saudi', color: '#10B981', icon: '🇸🇦' }
     ];
+
+    // Social media platforms mapping - هذه المنصات المستخدمة في PlanningPage
+    const socialPlatforms = ['twitter', 'linkedin', 'instagram', 'youtube', 'telegram', 'tiktok', 'facebook', 'snapchat'];
 
     // Calculate statistics from actual programs
     const stats = {
@@ -29,14 +32,24 @@ const DashboardPage = () => {
         totalPosts: programs.reduce((acc, p) => acc + (p.postsCount || 0), 0)
     };
 
-    // Calculate per-platform stats
-    const platformStats = platformsConfig.map(platform => {
+    // Calculate per-platform stats (for system platforms)
+    // البرامج مشتركة بين جميع المنصات، لذا سنعرض إحصائيات منصات التواصل الاجتماعي
+    const socialPlatformStats = [
+        { id: 'twitter', name: 'تويتر', nameEn: 'Twitter', color: '#1DA1F2', icon: '𝕏' },
+        { id: 'linkedin', name: 'لينكد إن', nameEn: 'LinkedIn', color: '#0077B5', icon: 'in' },
+        { id: 'instagram', name: 'إنستغرام', nameEn: 'Instagram', color: '#E1306C', icon: '📷' },
+        { id: 'youtube', name: 'يوتيوب', nameEn: 'YouTube', color: '#FF0000', icon: '▶' },
+        { id: 'telegram', name: 'تيليجرام', nameEn: 'Telegram', color: '#0088CC', icon: '✈' },
+        { id: 'tiktok', name: 'تيك توك', nameEn: 'TikTok', color: '#000000', icon: '🎵' },
+        { id: 'facebook', name: 'فيسبوك', nameEn: 'Facebook', color: '#1877F2', icon: 'f' },
+        { id: 'snapchat', name: 'سناب شات', nameEn: 'Snapchat', color: '#FFFC00', icon: '👻' }
+    ].map(platform => {
         const platformPrograms = programs.filter(p => p.platform === platform.id);
         return {
             ...platform,
             programsCount: platformPrograms.length,
             postsCount: platformPrograms.reduce((acc, p) => acc + (p.postsCount || 0), 0),
-            growth: Math.floor(Math.random() * 30) + 5 // Temporary placeholder
+            growth: Math.floor(Math.random() * 30) + 5
         };
     });
 
@@ -203,12 +216,11 @@ const DashboardPage = () => {
                         </button>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                        {platformStats.map((platform) => (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        {socialPlatformStats.map((platform) => (
                             <div
                                 key={platform.id}
                                 className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-2xl p-5 border shadow-sm hover:shadow-lg transition-all cursor-pointer group`}
-                                onClick={() => navigate(`/${platform.id}`)}
                             >
                                 <div className="flex items-center justify-between mb-4">
                                     <div
