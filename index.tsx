@@ -3,8 +3,10 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './src/context/AuthContext';
 import { DatabaseProvider } from './src/context/DatabaseContext';
+import { ContentProvider } from './src/context/ContentContext';
 import { LoginPage } from './src/pages/LoginPage';
 import { DashboardPage } from './src/pages/DashboardPage';
+import { AdminContentPage } from './src/pages/AdminContentPage';
 import { Layout } from './src/components/Layout';
 import { AdminDashboard } from './src/pages/AdminDashboard';
 import { AdminVisibilityPage } from './src/pages/AdminVisibilityPage';
@@ -70,7 +72,8 @@ const App = () => {
         <BrowserRouter>
             <AuthProvider>
                 <DatabaseProvider>
-                    <Routes>
+                    <ContentProvider>
+                        <Routes>
                         <Route path="/login" element={<LoginPage />} />
 
                         {/* Admin Routes */}
@@ -82,6 +85,11 @@ const App = () => {
                         <Route path="/admin/visibility" element={
                             <ProtectedRoute>
                                 <AdminVisibilityPage />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/admin/content" element={
+                            <ProtectedRoute>
+                                <AdminContentPage />
                             </ProtectedRoute>
                         } />
                         <Route path="/dashboard" element={
@@ -205,6 +213,7 @@ const App = () => {
 
                         </Route>
                     </Routes>
+                    </ContentProvider>
                 </DatabaseProvider>
             </AuthProvider>
         </BrowserRouter>
