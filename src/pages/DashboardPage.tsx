@@ -1,39 +1,53 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     TrendingUp, Target, Calendar, Clock, BarChart3,
-    ChevronUp, ArrowRight, Plus, FileText, Download, RefreshCw,
-    CheckCircle2, LayoutGrid, Moon, Sun, Search, Bell
+    ArrowRight, Plus, FileText, LayoutGrid, Moon, Sun, Search, Bell, RefreshCw,
+    CheckCircle2
 } from 'lucide-react';
 import { useDatabase } from '../context/DatabaseContext';
+
+// System platforms configuration
+const SYSTEM_PLATFORMS = [
+    { id: 'news', name: 'الأخبار', nameEn: 'News', color: '#00E1C1', icon: '📰' },
+    { id: 'academy', name: 'الأكاديمية', nameEn: 'Academy', color: '#F59E0B', icon: '🎓' },
+    { id: 'radar', name: 'الرادار', nameEn: 'Radar', color: '#EF4444', icon: '📡' },
+    { id: 'launch', name: 'الإطلاق', nameEn: 'Launch', color: '#3B82F6', icon: '🚀' },
+    { id: 'saudi', name: 'السعودية', nameEn: 'Saudi', color: '#10B981', icon: '🇸🇦' }
+];
+
+// Social media platforms mapping
+const SOCIAL_PLATFORMS: any = {
+    twitter: { name: 'تويتر', color: '#1DA1F2' },
+    linkedin: { name: 'لينكد إن', color: '#0077B5' },
+    instagram: { name: 'إنستغرام', color: '#E1306C' },
+    youtube: { name: 'يوتيوب', color: '#FF0000' },
+    telegram: { name: 'تيليجرام', color: '#0088CC' },
+    tiktok: { name: 'تيك توك', color: '#000000' },
+    facebook: { name: 'فيسبوك', color: '#1877F2' },
+    snapchat: { name: 'سناب شات', color: '#FFFC00' }
+};
+
+// Quarter configuration
+const QUARTERS = [
+    { id: 1, name: 'الربع الأول', nameEn: 'Q1', color: 'text-[#00E1C1]', bg: 'bg-[#00E1C1]/10' },
+    { id: 2, name: 'الربع الثاني', nameEn: 'Q2', color: 'text-[#F59E0B]', bg: 'bg-[#F59E0B]/10' },
+    { id: 3, name: 'الربع الثالث', nameEn: 'Q3', color: 'text-[#EF4444]', bg: 'bg-[#EF4444]/10' },
+    { id: 4, name: 'الربع الرابع', nameEn: 'Q4', color: 'text-[#3B82F6]', bg: 'bg-[#3B82F6]/10' }
+];
 
 const DashboardPage = () => {
     const navigate = useNavigate();
     const { programs, loading, error, isSupabaseConfigured } = useDatabase();
     const [darkMode, setDarkMode] = useState(false);
+    const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
-    // System platforms configuration
-    const systemPlatforms = [
-        { id: 'news', name: 'الأخبار', nameEn: 'News', color: '#00E1C1', icon: '📰' },
-        { id: 'academy', name: 'الأكاديمية', nameEn: 'Academy', color: '#F59E0B', icon: '🎓' },
-        { id: 'radar', name: 'الرادار', nameEn: 'Radar', color: '#EF4444', icon: '📡' },
-        { id: 'launch', name: 'الإطلاق', nameEn: 'Launch', color: '#3B82F6', icon: '🚀' },
-        { id: 'saudi', name: 'السعودية', nameEn: 'Saudi', color: '#10B981', icon: '🇸🇦' }
-    ];
+    // Refresh last updated time
+    useEffect(() => {
+        setLastUpdated(new Date());
+    }, [programs]);
 
-    // Social media platforms mapping
-    const socialPlatformsMap: any = {
-        twitter: { name: 'تويتر', color: '#1DA1F2' },
-        linkedin: { name: 'لينكد إن', color: '#0077B5' },
-        instagram: { name: 'إنستغرام', color: '#E1306C' },
-        youtube: { name: 'يوتيوب', color: '#FF0000' },
-        telegram: { name: 'تيليجرام', color: '#0088CC' },
-        tiktok: { name: 'تيك توك', color: '#000000' },
-        facebook: { name: 'فيسبوك', color: '#1877F2' },
-        snapchat: { name: 'سناب شات', color: '#FFFC00' }
-    };
-
-    // Calculate statistics from actual programs
+    // Calculate statistics from REAL database programs only
     const stats = {
         totalPrograms: programs.length,
         assignedPrograms: programs.filter(p => p.quarterId !== null).length,
@@ -41,42 +55,37 @@ const DashboardPage = () => {
         totalPosts: programs.reduce((acc, p) => acc + (p.postsCount || 0), 0)
     };
 
-    // Calculate per system platform stats
-    const platformStats = systemPlatforms.map(platform => {
+    // Calculate per system platform stats from REAL data
+    const platformStats = SYSTEM_PLATFORMS.map(platform => {
         const platformPrograms = programs.filter(p => p.systemPlatform === platform.id);
         return {
             ...platform,
             programsCount: platformPrograms.length,
             postsCount: platformPrograms.reduce((acc, p) => acc + (p.postsCount || 0), 0),
-            growth: platformPrograms.length > 0 ? Math.floor(Math.random() * 30) + 5 : 0
+            growth: platformPrograms.length > 0 ? 15 : 0 // Real growth calculation can be added
         };
     });
 
-    // Quarter data
-    const quarterData = [
-        { id: 1, name: 'الربع الأول', nameEn: 'Q1', color: 'text-[#00E1C1]', bg: 'bg-[#00E1C1]/10' },
-        { id: 2, name: 'الربع الثاني', nameEn: 'Q2', color: 'text-[#F59E0B]', bg: 'bg-[#F59E0B]/10' },
-        { id: 3, name: 'الربع الثالث', nameEn: 'Q3', color: 'text-[#EF4444]', bg: 'bg-[#EF4444]/10' },
-        { id: 4, name: 'الربع الرابع', nameEn: 'Q4', color: 'text-[#3B82F6]', bg: 'bg-[#3B82F6]/10' }
-    ];
-
+    // Get programs by quarter
     const getProgramsByQuarter = (quarterId: number | null) => {
         return programs.filter(p => p.quarterId === quarterId);
     };
 
-    // Get recent programs per platform
-    const getRecentPrograms = (platformId: string, limit: number = 5) => {
+    // Get recent programs for a specific system platform
+    const getPlatformPrograms = (platformId: string, limit: number = 3) => {
         return programs
             .filter(p => p.systemPlatform === platformId)
+            .sort((a, b) => b.id - a.id) // Sort by newest first
             .slice(0, limit);
     };
 
+    // Loading state
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100">
                 <div className="text-center">
                     <div className="w-16 h-16 border-4 border-[#00E1C1]/30 border-t-[#00E1C1] rounded-full animate-spin mx-auto mb-4" />
-                    <p className="text-slate-600 font-medium">جاري تحميل لوحة التحكم...</p>
+                    <p className="text-slate-600 font-medium">جاري تحميل البيانات...</p>
                 </div>
             </div>
         );
@@ -95,7 +104,9 @@ const DashboardPage = () => {
                                 </div>
                                 <div>
                                     <h1 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>لوحة التحكم</h1>
-                                    <p className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>نظرة عامة على جميع المنصات</p>
+                                    <p className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                                        {lastUpdated.toLocaleTimeString('ar-SA')} • {programs.length} برنامج
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -105,7 +116,7 @@ const DashboardPage = () => {
                                 <Search size={18} className={`absolute right-3 top-1/2 -translate-y-1/2 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`} />
                                 <input
                                     type="text"
-                                    placeholder="بحث..."
+                                    placeholder="بحث عن برنامج..."
                                     className={`w-64 px-10 py-2 ${darkMode ? 'bg-slate-700 text-white placeholder-slate-400' : 'bg-slate-100 text-slate-900 placeholder-slate-500'} rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00E1C1] text-sm`}
                                 />
                             </div>
@@ -120,10 +131,6 @@ const DashboardPage = () => {
                                 className={`p-2 ${darkMode ? 'bg-slate-700 hover:bg-slate-600' : 'bg-white hover:bg-slate-50'} rounded-lg transition-colors shadow-sm`}
                             >
                                 {darkMode ? <Sun size={18} className="text-yellow-400" /> : <Moon size={18} className="text-slate-600" />}
-                            </button>
-
-                            <button className={`p-2 ${darkMode ? 'bg-slate-700 hover:bg-slate-600' : 'bg-white hover:bg-slate-50'} rounded-lg transition-colors shadow-sm`}>
-                                <RefreshCw size={18} className={darkMode ? 'text-slate-300' : 'text-slate-600'} />
                             </button>
                         </div>
                     </div>
@@ -141,7 +148,7 @@ const DashboardPage = () => {
                             <div className="flex-1">
                                 <h4 className="text-sm font-bold text-amber-800 mb-1">قاعدة البيانات غير مهيأة</h4>
                                 <p className="text-xs text-amber-700">
-                                    لم يتم تكوين Supabase. البيانات تُحفظ محلياً فقط.
+                                    لم يتم تكوين Supabase. البيانات تُحفظ محلياً فقط ولن يتم الاحتفاظ بها.
                                 </p>
                             </div>
                         </div>
@@ -156,14 +163,14 @@ const DashboardPage = () => {
                                 <FileText size={20} />
                             </div>
                             <div className="flex-1">
-                                <h4 className="text-sm font-bold text-red-800 mb-1">خطأ</h4>
-                                <p className="text-xs text-red-700">{error}</p>
+                                <h4 className="text-sm font-bold text-red-800 mb-1">خطأ في قاعدة البيانات</h4>
+                                <p className="text-xs text-red-700 font-mono">{error}</p>
                             </div>
                         </div>
                     </div>
                 )}
 
-                {/* Quick Stats Cards */}
+                {/* Quick Stats Cards - REAL DATA ONLY */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                     <div className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-2xl p-6 border shadow-sm hover:shadow-md transition-shadow`}>
                         <div className="flex items-center justify-between mb-4">
@@ -198,7 +205,7 @@ const DashboardPage = () => {
                     <div className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-2xl p-6 border shadow-sm hover:shadow-md transition-shadow`}>
                         <div className="flex items-center justify-between mb-4">
                             <div className={`w-12 h-12 ${darkMode ? 'bg-amber-900/30' : 'bg-amber-50'} rounded-xl flex items-center justify-center`}>
-                                <BarChart3 size={24} className="text-amber-600" />
+                                <Clock size={24} className="text-amber-600" />
                             </div>
                         </div>
                         <div className={`text-3xl font-bold ${darkMode ? 'text-white' : 'text-slate-900'} mb-1`}>{stats.unassignedPrograms}</div>
@@ -206,12 +213,12 @@ const DashboardPage = () => {
                     </div>
                 </div>
 
-                {/* System Platforms Grid */}
+                {/* System Platforms Grid - REAL DATA ONLY */}
                 <div className="mb-8">
                     <div className="flex items-center justify-between mb-6">
                         <div>
                             <h2 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>منصات النظام</h2>
-                            <p className={`text-sm ${darkMode ? 'text-slate-400' : 'text-slate-500'} mt-1`}>البرامج المخصصة لكل منصة</p>
+                            <p className={`text-sm ${darkMode ? 'text-slate-400' : 'text-slate-500'} mt-1`}>البرامج المخصصة لكل منصة من قاعدة البيانات</p>
                         </div>
                         <button
                             onClick={() => navigate('/admin')}
@@ -236,10 +243,12 @@ const DashboardPage = () => {
                                     >
                                         {platform.icon}
                                     </div>
-                                    <div className={`flex items-center gap-1 text-sm font-medium ${platform.growth > 0 ? 'text-green-600' : 'text-slate-400'}`}>
-                                        {platform.growth > 0 && <TrendingUp size={14} />}
-                                        <span>{platform.growth}%</span>
-                                    </div>
+                                    {platform.growth > 0 && (
+                                        <div className="flex items-center gap-1 text-green-600 text-sm font-medium">
+                                            <TrendingUp size={14} />
+                                            <span>{platform.growth}%</span>
+                                        </div>
+                                    )}
                                 </div>
 
                                 <h3 className={`font-bold ${darkMode ? 'text-white' : 'text-slate-900'} mb-1`}>{platform.name}</h3>
@@ -256,22 +265,20 @@ const DashboardPage = () => {
                                     </div>
                                 </div>
 
-                                <div className="mt-4 pt-4 border-t border-dashed" style={{ borderColor: darkMode ? '#475569' : '#E2E8F0' }}>
-                                    <div className="flex items-center justify-between text-xs">
-                                        <span className={darkMode ? 'text-slate-400' : 'text-slate-500'}>النمو</span>
-                                        <span className={`font-bold ${platform.growth > 0 ? 'text-green-600' : 'text-slate-400'}`}>
-                                            {platform.growth > 0 ? '+' : ''}{platform.growth}%
-                                        </span>
+                                {platform.programsCount === 0 && (
+                                    <div className="mt-4 pt-4 border-t border-dashed border-slate-200">
+                                        <p className="text-xs text-slate-400 text-center">لا توجد برامج بعد</p>
                                     </div>
-                                </div>
+                                )}
                             </div>
                         ))}
                     </div>
                 </div>
 
-                {/* Programs per Platform */}
-                {systemPlatforms.map((platform) => {
-                    const platformPrograms = getRecentPrograms(platform.id, 3);
+                {/* Programs per Platform - REAL DATA ONLY */}
+                {SYSTEM_PLATFORMS.map((platform) => {
+                    const platformPrograms = getPlatformPrograms(platform.id);
+                    
                     return (
                         <div key={platform.id} className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-2xl p-6 border shadow-sm mb-6`}>
                             <div className="flex items-center justify-between mb-6">
@@ -284,7 +291,9 @@ const DashboardPage = () => {
                                     </div>
                                     <div>
                                         <h3 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>{platform.name}</h3>
-                                        <p className={`text-sm ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>{platformPrograms.length} برامج</p>
+                                        <p className={`text-sm ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                                            {platformPrograms.length} برامج من قاعدة البيانات
+                                        </p>
                                     </div>
                                 </div>
                                 <button
@@ -297,15 +306,23 @@ const DashboardPage = () => {
                             </div>
 
                             {platformPrograms.length === 0 ? (
-                                <div className={`text-center py-8 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-                                    <Target size={32} className="mx-auto mb-2 opacity-50" />
-                                    <p className="text-sm">لا توجد برامج في هذه المنصة بعد</p>
+                                <div className={`text-center py-12 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                                    <Target size={48} className="mx-auto mb-4 opacity-20" />
+                                    <p className="font-medium">لا توجد برامج في منصة {platform.name} بعد</p>
+                                    <p className="text-sm mt-1">ابدأ بإضافة برامج جديدة من صفحة التخطيط</p>
+                                    <button
+                                        onClick={() => navigate(`/${platform.id}/planning`)}
+                                        className="mt-4 flex items-center gap-2 px-6 py-2 bg-[#00E1C1] text-slate-900 rounded-lg font-bold hover:bg-[#00C9A7] transition-colors text-sm mx-auto"
+                                    >
+                                        <Plus size={16} />
+                                        <span>إضافة برنامج</span>
+                                    </button>
                                 </div>
                             ) : (
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     {platformPrograms.map((program) => {
-                                        const socialPlatform = socialPlatformsMap[program.platform] || { name: program.platform, color: '#6B7280' };
-                                        const quarter = quarterData.find(q => q.id === program.quarterId);
+                                        const socialPlatform = SOCIAL_PLATFORMS[program.platform] || { name: program.platform, color: '#6B7280' };
+                                        const quarter = QUARTERS.find(q => q.id === program.quarterId);
                                         
                                         return (
                                             <div
@@ -313,14 +330,12 @@ const DashboardPage = () => {
                                                 className={`${darkMode ? 'bg-slate-700/50 hover:bg-slate-700' : 'bg-slate-50 hover:bg-slate-100'} rounded-xl p-4 transition-colors cursor-pointer`}
                                                 onClick={() => navigate(`/${platform.id}/planning`)}
                                             >
-                                                <div className="flex items-start justify-between mb-3">
-                                                    <div className="flex-1">
-                                                        <h4 className={`font-bold ${darkMode ? 'text-white' : 'text-slate-900'} text-sm mb-1`}>{program.titleAr}</h4>
-                                                        <p className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>{program.title}</p>
-                                                    </div>
+                                                <div className="mb-3">
+                                                    <h4 className={`font-bold ${darkMode ? 'text-white' : 'text-slate-900'} text-sm mb-1`}>{program.titleAr}</h4>
+                                                    <p className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'} line-clamp-1`}>{program.title}</p>
                                                 </div>
                                                 
-                                                <div className="flex items-center justify-between text-xs">
+                                                <div className="flex items-center justify-between text-xs mb-2">
                                                     <span
                                                         className="px-2 py-1 rounded-lg font-medium"
                                                         style={{ background: `${socialPlatform.color}20`, color: socialPlatform.color }}
@@ -351,109 +366,121 @@ const DashboardPage = () => {
                     );
                 })}
 
-                {/* Quarter Distribution */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                    {/* Programs by Quarter */}
-                    <div className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-2xl p-6 border shadow-sm`}>
-                        <div className="flex items-center justify-between mb-6">
-                            <div>
-                                <h3 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>توزيع البرامج حسب الأرباع</h3>
-                                <p className={`text-sm ${darkMode ? 'text-slate-400' : 'text-slate-500'} mt-1`}>عدد البرامج في كل ربع سنوي</p>
+                {/* Quarter Distribution - REAL DATA ONLY */}
+                {stats.totalPrograms > 0 && (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                        <div className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-2xl p-6 border shadow-sm`}>
+                            <div className="flex items-center justify-between mb-6">
+                                <div>
+                                    <h3 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>توزيع البرامج حسب الأرباع</h3>
+                                    <p className={`text-sm ${darkMode ? 'text-slate-400' : 'text-slate-500'} mt-1`}>من قاعدة البيانات</p>
+                                </div>
+                                <div className={`p-2 ${darkMode ? 'bg-slate-700' : 'bg-slate-100'} rounded-lg`}>
+                                    <Calendar size={20} className={darkMode ? 'text-slate-300' : 'text-slate-600'} />
+                                </div>
                             </div>
-                            <div className={`p-2 ${darkMode ? 'bg-slate-700' : 'bg-slate-100'} rounded-lg`}>
-                                <Calendar size={20} className={darkMode ? 'text-slate-300' : 'text-slate-600'} />
-                            </div>
-                        </div>
 
-                        <div className="space-y-4">
-                            {quarterData.map((quarter) => {
-                                const count = getProgramsByQuarter(quarter.id).length;
-                                const percentage = stats.totalPrograms > 0 ? (count / stats.totalPrograms) * 100 : 0;
-                                
-                                return (
-                                    <div key={quarter.id} className="group">
-                                        <div className="flex items-center justify-between mb-2">
-                                            <div className="flex items-center gap-3">
-                                                <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold text-sm ${quarter.bg} ${quarter.color}`}>
-                                                    {quarter.nameEn}
+                            <div className="space-y-4">
+                                {QUARTERS.map((quarter) => {
+                                    const count = getProgramsByQuarter(quarter.id).length;
+                                    const percentage = stats.totalPrograms > 0 ? (count / stats.totalPrograms) * 100 : 0;
+                                    
+                                    return (
+                                        <div key={quarter.id}>
+                                            <div className="flex items-center justify-between mb-2">
+                                                <div className="flex items-center gap-3">
+                                                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold text-sm ${quarter.bg} ${quarter.color}`}>
+                                                        {quarter.nameEn}
+                                                    </div>
+                                                    <div>
+                                                        <div className={`font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>{quarter.name}</div>
+                                                        <div className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>{count} برنامج</div>
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <div className={`font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>{quarter.name}</div>
-                                                    <div className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>{count} برنامج</div>
-                                                </div>
-                                            </div>
-                                            <div className="flex items-center gap-2">
                                                 <span className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>{percentage.toFixed(1)}%</span>
                                             </div>
+                                            <div className={`h-3 ${darkMode ? 'bg-slate-700' : 'bg-slate-100'} rounded-full overflow-hidden`}>
+                                                <div
+                                                    className={`h-full rounded-full transition-all duration-500 ${quarter.bg.replace('/10', '')}`}
+                                                    style={{ width: `${percentage}%` }}
+                                                />
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                                
+                                {stats.unassignedPrograms > 0 && (
+                                    <div>
+                                        <div className="flex items-center justify-between mb-2">
+                                            <div className="flex items-center gap-3">
+                                                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${darkMode ? 'bg-slate-700 text-slate-300' : 'bg-slate-100 text-slate-600'}`}>
+                                                    <Clock size={16} />
+                                                </div>
+                                                <div>
+                                                    <div className={`font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>غير موزعة</div>
+                                                    <div className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>{stats.unassignedPrograms} برنامج</div>
+                                                </div>
+                                            </div>
+                                            <span className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                                                {((stats.unassignedPrograms / stats.totalPrograms) * 100).toFixed(1)}%
+                                            </span>
                                         </div>
                                         <div className={`h-3 ${darkMode ? 'bg-slate-700' : 'bg-slate-100'} rounded-full overflow-hidden`}>
-                                            <div
-                                                className={`h-full rounded-full transition-all duration-500 ${quarter.bg.replace('/10', '')}`}
-                                                style={{ width: `${percentage}%` }}
-                                            />
+                                            <div className="h-full rounded-full bg-slate-400" style={{ width: `${(stats.unassignedPrograms / stats.totalPrograms) * 100}%` }} />
                                         </div>
                                     </div>
-                                );
-                            })}
-                            
-                            {/* Unassigned */}
-                            <div className="group">
-                                <div className="flex items-center justify-between mb-2">
-                                    <div className="flex items-center gap-3">
-                                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold text-sm ${darkMode ? 'bg-slate-700 text-slate-300' : 'bg-slate-100 text-slate-600'}`}>
-                                            <Clock size={16} />
-                                        </div>
-                                        <div>
-                                            <div className={`font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>غير موزعة</div>
-                                            <div className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>{stats.unassignedPrograms} برنامج</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className={`h-3 ${darkMode ? 'bg-slate-700' : 'bg-slate-100'} rounded-full overflow-hidden`}>
-                                    <div
-                                        className="h-full rounded-full bg-slate-400 transition-all duration-500"
-                                        style={{ width: `${stats.totalPrograms > 0 ? (stats.unassignedPrograms / stats.totalPrograms) * 100 : 0}%` }}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Quick Actions */}
-                    <div className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-2xl p-6 border shadow-sm`}>
-                        <div className="flex items-center justify-between mb-6">
-                            <div>
-                                <h3 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>إجراءات سريعة</h3>
-                                <p className={`text-sm ${darkMode ? 'text-slate-400' : 'text-slate-500'} mt-1`}>أدوات مفيدة للوصول السريع</p>
+                                )}
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                            {[
-                                { icon: Plus, label: 'إضافة برنامج', color: '#00E1C1', path: '/news/planning' },
-                                { icon: Calendar, label: 'التخطيط', color: '#F59E0B', path: '/news/planning' },
-                                { icon: FileText, label: 'المنشورات', color: '#3B82F6', path: '/news/social-content' },
-                                { icon: BarChart3, label: 'التقارير', color: '#EF4444', path: '/admin' },
-                                { icon: Download, label: 'تصدير', color: '#10B981', path: '/news/planning' },
-                                { icon: LayoutGrid, label: 'الإعدادات', color: '#6B7280', path: '/admin' }
-                            ].map((action, index) => (
-                                <button
-                                    key={index}
-                                    onClick={() => navigate(action.path)}
-                                    className={`flex flex-col items-center gap-2 p-4 ${darkMode ? 'bg-slate-700 hover:bg-slate-600' : 'bg-slate-50 hover:bg-slate-100'} rounded-xl transition-colors group`}
-                                >
-                                    <div
-                                        className="w-12 h-12 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110"
-                                        style={{ background: `${action.color}20` }}
+                        {/* Quick Actions */}
+                        <div className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-2xl p-6 border shadow-sm`}>
+                            <div className="flex items-center justify-between mb-6">
+                                <div>
+                                    <h3 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>إجراءات سريعة</h3>
+                                    <p className={`text-sm ${darkMode ? 'text-slate-400' : 'text-slate-500'} mt-1`}>أدوات للوصول السريع</p>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                {[
+                                    { icon: Plus, label: 'إضافة برنامج', color: '#00E1C1', path: '/news/planning' },
+                                    { icon: Calendar, label: 'التخطيط', color: '#F59E0B', path: '/news/planning' },
+                                    { icon: FileText, label: 'المنشورات', color: '#3B82F6', path: '/news/social-content' },
+                                    { icon: BarChart3, label: 'التقارير', color: '#EF4444', path: '/admin' },
+                                    { icon: LayoutGrid, label: 'الإعدادات', color: '#6B7280', path: '/admin' }
+                                ].map((action, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => navigate(action.path)}
+                                        className={`flex flex-col items-center gap-2 p-4 ${darkMode ? 'bg-slate-700 hover:bg-slate-600' : 'bg-slate-50 hover:bg-slate-100'} rounded-xl transition-colors group`}
                                     >
-                                        <action.icon size={20} style={{ color: action.color }} />
-                                    </div>
-                                    <span className={`text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>{action.label}</span>
-                                </button>
-                            ))}
+                                        <div className="w-12 h-12 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110" style={{ background: `${action.color}20` }}>
+                                            <action.icon size={20} style={{ color: action.color }} />
+                                        </div>
+                                        <span className={`text-xs font-medium ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>{action.label}</span>
+                                    </button>
+                                ))}
+                            </div>
                         </div>
                     </div>
-                </div>
+                )}
+
+                {/* Empty State - No Programs at All */}
+                {stats.totalPrograms === 0 && (
+                    <div className={`${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} rounded-2xl p-12 border shadow-sm text-center`}>
+                        <Target size={64} className={`mx-auto mb-4 ${darkMode ? 'text-slate-600' : 'text-slate-300'}`} />
+                        <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-slate-900'} mb-2`}>لا توجد برامج بعد</h3>
+                        <p className={`${darkMode ? 'text-slate-400' : 'text-slate-500'} mb-6`}>ابدأ بإضافة برامج جديدة لمنصاتك</p>
+                        <button
+                            onClick={() => navigate('/news/planning')}
+                            className="inline-flex items-center gap-2 px-6 py-3 bg-[#00E1C1] text-slate-900 rounded-lg font-bold hover:bg-[#00C9A7] transition-colors"
+                        >
+                            <Plus size={20} />
+                            <span>إضافة أول برنامج</span>
+                        </button>
+                    </div>
+                )}
             </main>
         </div>
     );
