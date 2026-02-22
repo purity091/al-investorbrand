@@ -96,17 +96,9 @@ export const PlanningPage = () => {
     const [showProgramModal, setShowProgramModal] = useState(false);
 
     useEffect(() => {
-        if (programs.length > 0) {
-            setLocalPrograms(programs);
-        } else {
-            setLocalPrograms([
-                { id: 1, title: 'Q1 Awareness Campaign', titleAr: 'حملة التوعية للربع الأول', platform: 'twitter', platformName: 'إكس (تويتر)', platformColor: 'bg-[#1DA1F2]', postsCount: 100, quarterId: 1, order: 0, description: 'Comprehensive awareness campaign for Q1 2026', descriptionAr: 'حملة توعية شاملة للربع الأول 2026', objectives: 'Increase brand awareness by 40% | Reach 500K impressions | Drive engagement rate to 5%', objectivesAr: 'زيادة الوعي بالعلامة التجارية بنسبة 40% | الوصول لـ 500 ألف ظهور | رفع معدل التفاعل لـ 5%' },
-                { id: 2, title: 'Financial Literacy Series', titleAr: 'سلسلة التثقيف المالي', platform: 'linkedin', platformName: 'لينكد إن', platformColor: 'bg-[#0077B5]', postsCount: 100, quarterId: 1, order: 1, description: 'Educational content series on financial literacy', descriptionAr: 'سلسلة محتوى تعليمي حول التثقيف المالي', objectives: 'Educate 100K professionals | Generate 5K leads | Establish thought leadership', objectivesAr: 'تثقيف 100 ألف محترف | توليد 5 آلاف عميل محتمل | ترسيخ الريادة الفكرية' },
-                { id: 3, title: 'Instagram Growth Plan', titleAr: 'خطة نمو إنستغرام', platform: 'instagram', platformName: 'إنستغرام', platformColor: 'bg-gradient-to-br from-[#F58529] via-[#DD2A7B] to-[#8134AF]', postsCount: 100, quarterId: 2, order: 0, description: 'Visual storytelling and growth strategy for Instagram', descriptionAr: 'استراتيجية السرد البصري والنمو لإنستغرام', objectives: 'Grow followers to 250K | Achieve 8% engagement rate | Increase reach by 60%', objectivesAr: 'زيادة المتابعين لـ 250 ألف | تحقيق معدل تفاعل 8% | زيادة الوصول بنسبة 60%' },
-                { id: 4, title: 'YouTube Content Strategy', titleAr: 'استراتيجية محتوى يوتيوب', platform: 'youtube', platformName: 'يوتيوب', platformColor: 'bg-[#FF0000]', postsCount: 100, quarterId: null, order: 0, description: 'Long-form video content strategy for YouTube', descriptionAr: 'استراتيجية محتوى الفيديو الطويل ليوتيوب', objectives: 'Reach 100K subscribers | Achieve 1M total views | Build loyal community', objectivesAr: 'الوصول لـ 100 ألف مشترك | تحقيق مليون مشاهدة إجمالية | بناء مجتمع مخلص' },
-                { id: 5, title: 'Telegram Channel Launch', titleAr: 'إطلاق قناة تيليجرام', platform: 'telegram', platformName: 'تيليجرام', platformColor: 'bg-[#0088cc]', postsCount: 100, quarterId: null, order: 0, description: 'Launch and grow Telegram channel for real-time updates', descriptionAr: 'إطلاق وتنمية قناة تيليجرام للتحديثات الفورية', objectives: 'Launch channel | Gain 50K subscribers in 3 months | Daily engagement', objectivesAr: 'إطلاق القناة | كسب 50 ألف مشترك في 3 أشهر | تفاعل يومي' },
-            ]);
-        }
+        // Always use programs from database - no mock data
+        // If database is empty, localPrograms will be empty array
+        setLocalPrograms(programs);
     }, [programs]);
 
     const autoSaveToDatabase = async (programsToSave: Program[]) => {
@@ -492,20 +484,7 @@ export const PlanningPage = () => {
         }
     };
 
-    const loadSampleJSON = () => {
-        const sampleData: ImportExportData = {
-            programs: [
-                { id: 1, title: 'Brand Awareness Q1', titleAr: 'حملة التوعية بالعلامة التجارية', platform: 'twitter', platformName: 'إكس (تويتر)', platformColor: 'bg-[#1DA1F2]', postsCount: 100, quarterId: 1, order: 0 },
-                { id: 2, title: 'LinkedIn Thought Leadership', titleAr: 'الريادة الفكرية على لينكد إن', platform: 'linkedin', platformName: 'لينكد إن', platformColor: 'bg-[#0077B5]', postsCount: 100, quarterId: 1, order: 1 },
-                { id: 3, title: 'Instagram Visual Story', titleAr: 'القصة البصرية على إنستغرام', platform: 'instagram', platformName: 'إنستغرام', platformColor: 'bg-gradient-to-br from-[#F58529] via-[#DD2A7B] to-[#8134AF]', postsCount: 100, quarterId: 2, order: 0 },
-                { id: 4, title: 'YouTube Tutorial Series', titleAr: 'سلسلة دروس يوتيوب', platform: 'youtube', platformName: 'يوتيوب', platformColor: 'bg-[#FF0000]', postsCount: 50, quarterId: 3, order: 0 },
-                { id: 5, title: 'TikTok Viral Campaign', titleAr: 'حملة الفيروسية على تيك توك', platform: 'tiktok', platformName: 'تيك توك', platformColor: 'bg-black', postsCount: 150, quarterId: 4, order: 0 },
-            ],
-            exportDate: new Date().toISOString(),
-            version: '1.0',
-        };
-        setJsonInput(JSON.stringify(sampleData, null, 2));
-    };
+    // Removed loadSampleJSON - no mock data in production
 
     const generateAITemplate = () => {
         const template = `# انسخ هذا النموذج وأرسله للذكاء الاصطناعي للحصول على برامج جاهزة
@@ -1107,7 +1086,7 @@ export const PlanningPage = () => {
                                 </div>
                                 <div>
                                     <label className="block text-sm font-bold text-[#0D1137] mb-2">عنوان البرنامج (عربي)</label>
-                                    <input type="text" value={newProgramTitleAr} onChange={(e) => setNewProgramTitleAr(e.target.value)} className="w-full px-3 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:border-[#00E1C1] text-sm" placeholder="مثال: حملة الربع الأول 2026" />
+                                    <input type="text" value={newProgramTitleAr} onChange={(e) => setNewProgramTitleAr(e.target.value)} className="w-full px-3 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:border-[#00E1C1] text-sm" placeholder="مثال: حملة ��لربع الأول 2026" />
                                 </div>
                             </div>
                             <div className="grid grid-cols-2 gap-3">
