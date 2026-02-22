@@ -7,13 +7,13 @@ import {
 } from 'lucide-react';
 import { useDatabase } from '../context/DatabaseContext';
 
-// System platforms configuration
+// System platforms configuration - Only enabled platforms for users
 const SYSTEM_PLATFORMS = [
-    { id: 'news', name: 'الأخبار', nameEn: 'News', color: '#00E1C1', icon: '📰' },
-    { id: 'academy', name: 'الأكاديمية', nameEn: 'Academy', color: '#F59E0B', icon: '🎓' },
-    { id: 'radar', name: 'الرادار', nameEn: 'Radar', color: '#EF4444', icon: '📡' },
-    { id: 'launch', name: 'الإطلاق', nameEn: 'Launch', color: '#3B82F6', icon: '🚀' },
-    { id: 'saudi', name: 'السعودية', nameEn: 'Saudi', color: '#10B981', icon: '🇸🇦' }
+    { id: 'news', name: 'الأخبار', nameEn: 'News', color: '#00E1C1', icon: '📰', enabled: true },
+    { id: 'academy', name: 'الأكاديمية', nameEn: 'Academy', color: '#F59E0B', icon: '🎓', enabled: false }, // Disabled - focus on 3 platforms
+    { id: 'radar', name: 'الرادار', nameEn: 'Radar', color: '#EF4444', icon: '📡', enabled: true },
+    { id: 'launch', name: 'الإطلاق', nameEn: 'Launch', color: '#3B82F6', icon: '🚀', enabled: true },
+    { id: 'saudi', name: 'السعودية', nameEn: 'Saudi', color: '#10B981', icon: '🇸🇦', enabled: false } // Disabled - focus on 3 platforms
 ];
 
 // Social media platforms mapping
@@ -56,15 +56,18 @@ const DashboardPage = () => {
     };
 
     // Calculate per system platform stats from REAL data
-    const platformStats = SYSTEM_PLATFORMS.map(platform => {
-        const platformPrograms = programs.filter(p => p.systemPlatform === platform.id);
-        return {
-            ...platform,
-            programsCount: platformPrograms.length,
-            postsCount: platformPrograms.reduce((acc, p) => acc + (p.postsCount || 0), 0),
-            growth: platformPrograms.length > 0 ? 15 : 0 // Real growth calculation can be added
-        };
-    });
+    // Only include enabled platforms
+    const platformStats = SYSTEM_PLATFORMS
+        .filter(p => p.enabled)
+        .map(platform => {
+            const platformPrograms = programs.filter(p => p.systemPlatform === platform.id);
+            return {
+                ...platform,
+                programsCount: platformPrograms.length,
+                postsCount: platformPrograms.reduce((acc, p) => acc + (p.postsCount || 0), 0),
+                growth: platformPrograms.length > 0 ? 15 : 0 // Real growth calculation can be added
+            };
+        });
 
     // Get programs by quarter
     const getProgramsByQuarter = (quarterId: number | null) => {
@@ -213,12 +216,12 @@ const DashboardPage = () => {
                     </div>
                 </div>
 
-                {/* System Platforms Grid - REAL DATA ONLY */}
+                {/* System Platforms Grid - REAL DATA ONLY - Enabled Platforms */}
                 <div className="mb-8">
                     <div className="flex items-center justify-between mb-6">
                         <div>
-                            <h2 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>منصات النظام</h2>
-                            <p className={`text-sm ${darkMode ? 'text-slate-400' : 'text-slate-500'} mt-1`}>البرامج المخصصة لكل منصة من قاعدة البيانات</p>
+                            <h2 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>المنصات</h2>
+                            <p className={`text-sm ${darkMode ? 'text-slate-400' : 'text-slate-500'} mt-1`}>المنصات المتاحة للمستخدمين</p>
                         </div>
                         <button
                             onClick={() => navigate('/admin')}
@@ -229,7 +232,7 @@ const DashboardPage = () => {
                         </button>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {platformStats.map((platform) => (
                             <div
                                 key={platform.id}
@@ -275,8 +278,8 @@ const DashboardPage = () => {
                     </div>
                 </div>
 
-                {/* Programs per Platform - REAL DATA ONLY */}
-                {SYSTEM_PLATFORMS.map((platform) => {
+                {/* Programs per Platform - REAL DATA ONLY - Enabled Platforms Only */}
+                {SYSTEM_PLATFORMS.filter(p => p.enabled).map((platform) => {
                     const platformPrograms = getPlatformPrograms(platform.id);
                     
                     return (

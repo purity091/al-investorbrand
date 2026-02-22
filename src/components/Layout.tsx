@@ -53,11 +53,11 @@ const sections = [
 ];
 
 const platforms = [
-  { id: 'news', basePath: '/news', title: 'منصة المستثمر الإخبارية', icon: <Newspaper size={18} /> },
-  { id: 'academy', basePath: '/academy', title: 'أكاديمية المستثمر', icon: <GraduationCap size={18} /> },
-  { id: 'radar', basePath: '/radar', title: 'رادار المستثمر', icon: <Radar size={18} /> },
-  { id: 'launch', basePath: '/launch', title: 'مساعد الإطلاق', icon: <Rocket size={18} /> },
-  { id: 'saudi', basePath: '/saudi', title: 'المستثمر سعودية', icon: <Building2 size={18} /> },
+  { id: 'news', basePath: '/news', title: 'منصة المستثمر الإخبارية', icon: <Newspaper size={18} />, enabled: true },
+  { id: 'academy', basePath: '/academy', title: 'أكاديمية المستثمر', icon: <GraduationCap size={18} />, enabled: false }, // Disabled - focus on 3 platforms
+  { id: 'radar', basePath: '/radar', title: 'رادار المستثمر', icon: <Radar size={18} />, enabled: true },
+  { id: 'launch', basePath: '/launch', title: 'مساعد الإطلاق', icon: <Rocket size={18} />, enabled: true },
+  { id: 'saudi', basePath: '/saudi', title: 'المستثمر سعودية', icon: <Building2 size={18} />, enabled: false }, // Disabled - focus on 3 platforms
 ];
 
 export const Layout = () => {
@@ -123,7 +123,8 @@ export const Layout = () => {
           </div>
 
           <nav className="px-3 space-y-2 pb-6">
-            {platforms.map((platform) => (
+            {/* Only show enabled platforms for navigation */}
+            {platforms.filter(p => p.enabled).map((platform) => (
               <div key={platform.id} className="space-y-1">
                 <button
                   onClick={() => togglePlatform(platform.id)}
