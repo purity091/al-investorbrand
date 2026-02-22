@@ -129,6 +129,10 @@ export const PlanningPage = () => {
         const platform = platforms.find(p => p.id === newProgramPlatform);
         if (!platform) return;
 
+        // Get system platform from URL path
+        const pathParts = window.location.pathname.split('/');
+        const systemPlatform = pathParts[1] || 'news'; // news, academy, radar, launch, saudi
+
         const newProgram: Program = {
             id: Date.now(),
             title: newProgramTitle,
@@ -139,6 +143,7 @@ export const PlanningPage = () => {
             postsCount: newProgramPosts,
             quarterId: null,
             order: localPrograms.filter(p => p.quarterId === null).length,
+            systemPlatform: systemPlatform, // Add system platform
             description: newProgramDescription,
             descriptionAr: newProgramDescriptionAr,
             objectives: newProgramObjectives,
@@ -188,6 +193,7 @@ export const PlanningPage = () => {
                     platformName: platform.nameAr,
                     platformColor: platform.color,
                     postsCount: newProgramPosts,
+                    systemPlatform: p.systemPlatform, // Keep existing system platform
                     description: newProgramDescription,
                     descriptionAr: newProgramDescriptionAr,
                     objectives: newProgramObjectives,
@@ -374,6 +380,10 @@ export const PlanningPage = () => {
             const importedPrograms: Program[] = data.programs.map((p: any, index: number) => {
                 // Handle both camelCase and snake_case field names
                 const platform = platforms.find(pl => pl.id === p.platform) || platforms[0];
+                
+                // Get system platform from URL or default to 'news'
+                const pathParts = window.location.pathname.split('/');
+                const systemPlatform = p.systemPlatform || p.system_platform || pathParts[1] || 'news';
 
                 return {
                     // ✅ Generate unique ID to prevent duplicates
@@ -386,6 +396,7 @@ export const PlanningPage = () => {
                     postsCount: p.postsCount || p.posts_count || 100,
                     quarterId: null, // ✅ Default: not distributed (null)
                     order: localPrograms.filter(prog => prog.quarterId === null).length + index, // Add to end of unassigned
+                    systemPlatform: systemPlatform, // Add system platform
                     description: typeof p.description === 'string' ? p.description : '',
                     descriptionAr: typeof p.descriptionAr === 'string' ? p.descriptionAr : '',
                     objectives: typeof p.objectives === 'string' ? p.objectives : '',
@@ -444,6 +455,10 @@ export const PlanningPage = () => {
         try {
             const lines = bulkTextInput.trim().split('\n');
             const newPrograms: Program[] = [];
+            
+            // Get system platform from URL
+            const pathParts = window.location.pathname.split('/');
+            const systemPlatform = pathParts[1] || 'news';
 
             lines.forEach((line, index) => {
                 const trimmedLine = line.trim();
@@ -467,6 +482,7 @@ export const PlanningPage = () => {
                             postsCount: postsCount,
                             quarterId: null,
                             order: index,
+                            systemPlatform: systemPlatform, // Add system platform
                             description: '',
                             descriptionAr: '',
                             objectives: '',

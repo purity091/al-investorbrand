@@ -11,6 +11,7 @@ interface Program {
     postsCount: number;
     quarterId: number | null;
     order: number;
+    systemPlatform?: string; // news, academy, radar, launch, saudi
     description?: string;
     descriptionAr?: string;
     objectives?: string;
@@ -82,6 +83,7 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                     postsCount: item.posts_count,
                     quarterId: item.quarter_id,
                     order: item.order,
+                    systemPlatform: item.system_platform || 'news', // Default to 'news'
                     description: item.description || '',
                     descriptionAr: item.description_ar || '',
                     objectives: item.objectives || '',
@@ -116,6 +118,7 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                 posts_count: p.postsCount,
                 quarter_id: p.quarterId,
                 order: p.order,
+                system_platform: p.systemPlatform || 'news', // Default to 'news'
                 description: p.description || '',
                 description_ar: p.descriptionAr || '',
                 objectives: p.objectives || '',
