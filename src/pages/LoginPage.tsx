@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Mail, Lock, Eye, EyeOff, AlertCircle, CheckCircle, Shield } from 'lucide-react';
@@ -12,12 +12,19 @@ export const LoginPage = () => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
-    
-    const { signIn, signUp, resetPassword } = useAuth();
+
+    const { signIn, signUp, resetPassword, isAuthenticated, loading: authLoading } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
 
     const from = (location.state as any)?.from?.pathname || '/news';
+
+    // If user is already authenticated, redirect away from login page
+    useEffect(() => {
+        if (!authLoading && isAuthenticated) {
+            navigate(from, { replace: true });
+        }
+    }, [authLoading, isAuthenticated, from, navigate]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -184,11 +191,10 @@ export const LoginPage = () => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className={`w-full py-3 rounded-xl font-bold text-white transition-all ${
-                                loading
+                            className={`w-full py-3 rounded-xl font-bold text-white transition-all ${loading
                                     ? 'bg-slate-400 cursor-not-allowed'
                                     : 'bg-[#0D1137] hover:bg-[#1a237e] hover:shadow-lg'
-                            }`}
+                                }`}
                         >
                             {loading ? (
                                 <span className="flex items-center justify-center gap-2">
