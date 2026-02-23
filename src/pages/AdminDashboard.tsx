@@ -37,7 +37,7 @@ export const AdminDashboard = () => {
             icon: <Users size={32} />,
             color: 'bg-[#3B82F6]',
             action: () => navigate('/admin/users'),
-            enabled: false
+            enabled: true
         },
         {
             title: 'إعدادات النظام',

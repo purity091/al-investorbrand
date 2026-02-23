@@ -7,6 +7,7 @@ import { ContentProvider } from './src/context/ContentContext';
 import { LoginPage } from './src/pages/LoginPage';
 import { DashboardPage } from './src/pages/DashboardPage';
 import { AdminContentPage } from './src/pages/AdminContentPage';
+import { AdminUsersPage } from './src/pages/AdminUsersPage';
 import { Layout } from './src/components/Layout';
 import { AdminDashboard } from './src/pages/AdminDashboard';
 import { AdminVisibilityPage } from './src/pages/AdminVisibilityPage';
@@ -90,6 +91,11 @@ const App = () => {
                         <Route path="/admin/content" element={
                             <ProtectedRoute>
                                 <AdminContentPage />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/admin/users" element={
+                            <ProtectedRoute>
+                                <AdminUsersPage />
                             </ProtectedRoute>
                         } />
                         <Route path="/dashboard" element={
