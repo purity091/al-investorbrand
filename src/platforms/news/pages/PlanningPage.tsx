@@ -102,7 +102,14 @@ export const PlanningPage = () => {
 
     // Filter programs by current system platform - ONLY show programs for THIS platform
     useEffect(() => {
+        console.log('PlanningPage: Current platform:', currentSystemPlatform);
+        console.log('PlanningPage: All programs from DB:', programs.length);
+        
         const platformPrograms = programs.filter(p => p.systemPlatform === currentSystemPlatform);
+        
+        console.log('PlanningPage: Filtered programs for', currentSystemPlatform, ':', platformPrograms.length);
+        console.log('PlanningPage: Sample filtered program:', platformPrograms[0]);
+        
         setLocalPrograms(platformPrograms);
     }, [programs, currentSystemPlatform]);
 

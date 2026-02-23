@@ -72,23 +72,31 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
             if (fetchError) throw fetchError;
             if (data) {
+                console.log('DatabaseContext: Loaded programs from DB:', data.length);
+                
                 // Transform snake_case to camelCase
-                const transformed = data.map(item => ({
-                    id: item.id,
-                    title: item.title,
-                    titleAr: item.title_ar,
-                    platform: item.platform,
-                    platformName: item.platform_name,
-                    platformColor: item.platform_color,
-                    postsCount: item.posts_count,
-                    quarterId: item.quarter_id,
-                    order: item.order,
-                    systemPlatform: item.system_platform || 'news', // Default to 'news'
-                    description: item.description || '',
-                    descriptionAr: item.description_ar || '',
-                    objectives: item.objectives || '',
-                    objectivesAr: item.objectives_ar || '',
-                }));
+                const transformed = data.map(item => {
+                    const transformedItem = {
+                        id: item.id,
+                        title: item.title,
+                        titleAr: item.title_ar,
+                        platform: item.platform,
+                        platformName: item.platform_name,
+                        platformColor: item.platform_color,
+                        postsCount: item.posts_count,
+                        quarterId: item.quarter_id,
+                        order: item.order,
+                        systemPlatform: item.system_platform || 'news', // Default to 'news' if NULL
+                        description: item.description || '',
+                        descriptionAr: item.description_ar || '',
+                        objectives: item.objectives || '',
+                        objectivesAr: item.objectives_ar || '',
+                    };
+                    return transformedItem;
+                });
+                
+                console.log('DatabaseContext: Transformed programs:', transformed.length);
+                console.log('DatabaseContext: Sample program:', transformed[0]);
                 setPrograms(transformed);
             }
         } catch (err: any) {
