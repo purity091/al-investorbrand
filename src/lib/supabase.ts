@@ -1,11 +1,16 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+const supabaseUrl = (import.meta.env.VITE_SUPABASE_URL || '').trim();
+const supabaseAnonKey = (import.meta.env.VITE_SUPABASE_ANON_KEY || '').trim();
 
 // Check if Supabase is properly configured
 const isSupabaseConfigured = supabaseUrl && supabaseAnonKey &&
     (supabaseUrl.startsWith('https://') || supabaseUrl.startsWith('http://'));
+
+if (!isSupabaseConfigured) {
+    console.warn('Supabase is NOT configured properly. Please check your environment variables.');
+    console.debug('VITE_SUPABASE_URL provided length:', supabaseUrl.length);
+}
 
 // Simple mutex lock to prevent Navigator LockManager timeouts
 // This avoids issues with the Web Locks API which can fail behind VPN/proxy
@@ -108,6 +113,20 @@ if (isSupabaseConfigured) {
     }
 
     _supabase = createClient(supabaseUrl, supabaseAnonKey, {
+        global: {
+            fetch: async (url: RequestInfo | URL, options?: RequestInit) => {
+                try {
+                    const response = await fetch(url, options);
+                    return response;
+                } catch (error: any) {
+                    console.error('Supabase fetch completely failed. URL:', url, 'Error:', error.message);
+                    if (error.message.includes('NetworkError') || error.message.includes('Failed to fetch')) {
+                        console.error('This is likely a CORS issue, an Adblocker blocking the request, or your internet/VPN connection is down.');
+                    }
+                    throw error;
+                }
+            }
+        },
         auth: {
             lock: simpleLock,
             persistSession: true,
