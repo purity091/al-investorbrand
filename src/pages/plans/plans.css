@@ -1,0 +1,451 @@
+/* Roadmap.sh style aesthetic for Plans */
+.plan-container {
+    --bg-color: #ffffff;
+    --card-bg: #ffffff;
+    --card-border: #e4e4e7;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --text-primary: #09090b;
+    --text-secondary: #3f3f46;
+    --text-muted: #71717a;
+    --info-bg: #f4f4f5;
+
+    --linkedin-color: #0a66c2;
+    --facebook-color: #1877f2;
+    --instagram-color: #e1306c;
+    --x-color: #0f1419;
+    --primary-accent: #000000;
+
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: 'Inter', 'Tajawal', system-ui, -apple-system, sans-serif;
+    line-height: 1.7;
+    font-size: 16px;
+    min-height: 100vh;
+    position: relative;
+    direction: rtl;
+}
+
+.plan-container * {
+    box-sizing: border-box;
+}
+
+/* Layout - Single Focused Column */
+.plan-container .app-layout {
+    display: block;
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+}
+
+/* Main Content - Max Width similar to roadmap.sh articles */
+.plan-container .main-content {
+    padding: 0 1.5rem 6rem 1.5rem;
+    max-width: 800px;
+    /* Narrower for optimal reading */
+    margin: 0 auto;
+}
+
+/* Top Navigation (TOC) */
+.plan-container .top-toc {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--card-border);
+    padding: 1rem 0;
+    margin-bottom: 3rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.plan-container .brand-title {
+    display: none;
+    /* Hide brand title to keep it minimalistic like roadmap articles */
+}
+
+.plan-container .nav-section {
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+.plan-container .nav-section::-webkit-scrollbar {
+    display: none;
+}
+
+.plan-container .toc-links {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+}
+
+.plan-container .toc-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 0.4rem 0.8rem;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+.plan-container .toc-links a:hover {
+    color: var(--text-primary);
+    background: var(--info-bg);
+}
+
+.plan-container .toc-links a.toc-active {
+    color: #ffffff;
+    background: var(--primary-accent);
+    font-weight: 600;
+}
+
+/* Header */
+.plan-container header.page-header {
+    margin-bottom: 3rem;
+    padding-top: 1rem;
+}
+
+.plan-container .badge {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    background: var(--info-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    color: var(--text-secondary);
+    font-weight: 600;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+}
+
+.plan-container .page-header h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin: 0 0 1rem 0;
+    line-height: 1.25;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+}
+
+.plan-container .page-header p {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* Sections & Toggles */
+.plan-container .sections-wrapper {
+    width: 100%;
+    /* No columns! Single flow reading experience */
+}
+
+.plan-container section {
+    margin-bottom: 2rem;
+    scroll-margin-top: 5rem;
+}
+
+/* Roadmap.sh style Accordions/Toggles */
+.plan-container details.toggle-section {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--card-border);
+    border-radius: 0;
+    overflow: hidden;
+}
+
+.plan-container details.toggle-section[open] {
+    box-shadow: none;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.plan-container details.toggle-section summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 1.5rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
+    background: transparent;
+}
+
+.plan-container details.toggle-section summary::-webkit-details-marker {
+    display: none;
+}
+
+.plan-container details.toggle-section summary:hover {
+    color: var(--platform-color);
+}
+
+.plan-container details.toggle-section h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: inherit;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.plan-container details.toggle-section h2 span {
+    display: none;
+    /* No emojis */
+}
+
+.plan-container .toggle-icon {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    transition: transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.plan-container details.toggle-section[open] summary .toggle-icon {
+    transform: rotate(180deg);
+}
+
+.plan-container .toggle-content {
+    padding: 0 0 2rem 0;
+    border-top: none;
+    animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Information Cards & Grids */
+.plan-container .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.plan-container .info-card {
+    background: #ffffff;
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    padding: 1.5rem;
+    box-shadow: none;
+    transition: box-shadow 0.2s;
+}
+
+.plan-container .info-card[style*="linear-gradient"] {
+    background: #ffffff !important;
+    border: 1px solid var(--card-border) !important;
+}
+
+.plan-container .info-card:hover {
+    box-shadow: var(--shadow-sm);
+}
+
+.plan-container .info-card h4,
+.plan-container .info-card h3 {
+    margin: 0 0 0.8rem 0;
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.plan-container .info-card p,
+.plan-container .info-card ul {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.plan-container .info-card ul {
+    padding-right: 1.2rem;
+}
+
+.plan-container .info-card li {
+    margin-bottom: 0.3rem;
+}
+
+/* Phase styling simulating Roadmap.sh lists */
+.plan-container .phase-card {
+    background: #ffffff;
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.plan-container .phase-card::before {
+    display: none;
+    /* Remove colorful borders */
+}
+
+.plan-container .phase-card h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.plan-container .phase-badge {
+    background: var(--info-bg);
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    border: 1px solid var(--card-border);
+}
+
+.plan-container .phase-content .goal {
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    font-weight: 600;
+    padding: 0.8rem;
+    background: var(--info-bg);
+    border-radius: 4px;
+}
+
+.plan-container .phase-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.plan-container .phase-content li {
+    position: relative;
+    padding-right: 1.2rem;
+    margin-bottom: 0.8rem;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.plan-container .phase-content li::before {
+    content: '-';
+    position: absolute;
+    right: 0;
+    color: var(--text-muted);
+    font-size: 1rem;
+    top: 0px;
+}
+
+/* Numbered Box List */
+.plan-container .content-types-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.plan-container .type-item {
+    background: #ffffff;
+    border: 1px solid var(--card-border);
+    padding: 1.2rem;
+    border-radius: 6px;
+}
+
+.plan-container .type-item .num {
+    font-size: 0.85rem;
+    font-family: monospace;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    display: inline-block;
+    background: var(--info-bg);
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+}
+
+.plan-container .type-item strong {
+    display: block;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.plan-container .type-item span {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* Warnings */
+.plan-container .warning-box {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    padding: 1.2rem;
+    border-radius: 6px;
+    margin: 1.5rem 0;
+}
+
+.plan-container .warning-box h4 {
+    margin: 0 0 0.4rem 0;
+    color: #b45309;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.plan-container .warning-box p {
+    margin: 0;
+    color: #78350f;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .plan-container .main-content {
+        padding: 0 1rem 4rem 1rem;
+    }
+
+    .plan-container .page-header h1 {
+        font-size: 2rem;
+    }
+
+    .plan-container .grid-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Custom platform-specific overrides - Simplified */
+.plan-container.insta-plan .insta-gradient {
+    background: none;
+    color: var(--instagram-color);
+    -webkit-text-fill-color: initial;
+}
+
+.plan-container.x-plan .toc-links a.toc-active {
+    background: var(--x-color);
+}
+
+.plan-container.facebook-plan .toc-links a.toc-active {
+    background: var(--facebook-color);
+}
+
+.plan-container.insta-plan .toc-links a.toc-active {
+    background: var(--instagram-color);
+}
+
+.plan-container.linkedin-plan .toc-links a.toc-active {
+    background: var(--linkedin-color);
+}

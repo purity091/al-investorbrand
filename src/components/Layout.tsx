@@ -2,6 +2,7 @@ import React from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
   Layout as LayoutIcon,
+  LayoutGrid,
   Target,
   ShieldCheck,
   Palette,
@@ -162,6 +163,40 @@ export const Layout = () => {
                 )}
               </div>
             ))}
+
+            {/* Plans Section */}
+            <div className="pt-2 mt-2 border-t border-slate-100 mx-3 !mb-4">
+              <button
+                onClick={() => togglePlatform('plans')}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all ${openPlatforms['plans']
+                  ? 'bg-slate-50 text-[#0D1137]'
+                  : 'text-[#0D1137] hover:bg-slate-50'
+                  }`}
+              >
+                <span className="flex items-center gap-2 text-sm font-bold">
+                  <BookOpen size={18} className="text-[#00E1C1]" />
+                  خطط المحتوى (10K)
+                </span>
+                {openPlatforms['plans'] ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+              </button>
+
+              {openPlatforms['plans'] && (
+                <div className="pr-3 mt-1 space-y-0.5 border-r-2 border-[#00E1C1]/30 mr-3">
+                  <NavLink to="/plans/linkedin" className={({ isActive }) => `sidebar-link w-full flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all text-xs font-medium ${isActive ? 'bg-[#00E1C1]/10 text-[#0D1137] font-bold' : 'text-slate-500 hover:bg-[#00E1C1]/10 hover:text-[#0D1137]'}`}>
+                    <span className="text-[#0a66c2] text-sm">🔵</span> LinkedIn
+                  </NavLink>
+                  <NavLink to="/plans/facebook" className={({ isActive }) => `sidebar-link w-full flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all text-xs font-medium ${isActive ? 'bg-[#00E1C1]/10 text-[#0D1137] font-bold' : 'text-slate-500 hover:bg-[#00E1C1]/10 hover:text-[#0D1137]'}`}>
+                    <span className="text-[#1877f2] text-sm">📘</span> Facebook
+                  </NavLink>
+                  <NavLink to="/plans/instagram" className={({ isActive }) => `sidebar-link w-full flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all text-xs font-medium ${isActive ? 'bg-[#00E1C1]/10 text-[#0D1137] font-bold' : 'text-slate-500 hover:bg-[#00E1C1]/10 hover:text-[#0D1137]'}`}>
+                    <span className="text-[#e1306c] text-sm">📸</span> Instagram
+                  </NavLink>
+                  <NavLink to="/plans/x" className={({ isActive }) => `sidebar-link w-full flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all text-xs font-medium ${isActive ? 'bg-[#00E1C1]/10 text-[#0D1137] font-bold' : 'text-slate-500 hover:bg-[#00E1C1]/10 hover:text-[#0D1137]'}`}>
+                    <span className="text-sm">⚫</span> X (Twitter)
+                  </NavLink>
+                </div>
+              )}
+            </div>
           </nav>
 
           <div className="mt-auto p-6 border-t border-slate-100">
@@ -169,6 +204,15 @@ export const Layout = () => {
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
               الوعي المالي العربي
             </div>
+
+            {/* Dashboard Link */}
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="flex items-center gap-2 w-full px-3 py-2 bg-[#00E1C1]/10 text-[#0D1137] rounded-lg hover:bg-[#00E1C1]/20 transition-colors text-xs font-bold mb-2"
+            >
+              <LayoutGrid size={14} className="text-[#00E1C1]" />
+              <span>اللوحة الرئيسية</span>
+            </button>
 
             {/* Admin Link - Only for admins */}
             {profile?.role === 'admin' || profile?.role === 'superadmin' ? (
