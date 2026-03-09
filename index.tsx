@@ -25,6 +25,7 @@ import { LinkedInPlan } from './src/pages/plans/LinkedInPlan';
 import { FacebookPlan } from './src/pages/plans/FacebookPlan';
 import { InstagramPlan } from './src/pages/plans/InstagramPlan';
 import { XPlan } from './src/pages/plans/XPlan';
+import { EducationHub } from './src/pages/EducationHub';
 
 // Protected Route Component - MUST check loading before redirecting
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -230,6 +231,17 @@ const App = () => {
                                     <Route path="facebook" element={<FacebookPlan />} />
                                     <Route path="instagram" element={<InstagramPlan />} />
                                     <Route path="x" element={<XPlan />} />
+                                </Route>
+
+                                {/* Education Hub */}
+                                <Route path="education">
+                                    <Route index element={<EducationHub />} />
+                                    <Route path="basics" element={<EducationHub />} />
+                                    <Route path="algorithms" element={<EducationHub />} />
+                                    <Route path="content-strategy" element={<EducationHub />} />
+                                    <Route path="analytics" element={<EducationHub />} />
+                                    <Route path="growth" element={<EducationHub />} />
+                                    <Route path="tools" element={<EducationHub />} />
                                 </Route>
 
                             </Route>
