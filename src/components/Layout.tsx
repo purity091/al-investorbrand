@@ -14,6 +14,7 @@ import {
   Share2,
   Layers,
   Instagram,
+  Image as ImageIcon,
   PenTool,
   ChevronDown,
   ChevronRight,
@@ -196,6 +197,22 @@ export const Layout = () => {
                   </NavLink>
                 </div>
               )}
+            </div>
+
+            {/* Visual Assets Generator Link */}
+            <div className="mx-3 mt-1 pb-4">
+              <NavLink
+                to="/social-assets"
+                className={({ isActive }) =>
+                  `w-full flex items-center gap-2 px-3 py-2.5 rounded-xl transition-all font-bold text-sm ${isActive
+                    ? 'bg-[#00E1C1] text-[#0D1137]'
+                    : 'text-[#0D1137] hover:bg-slate-50'
+                  }`
+                }
+              >
+                <ImageIcon size={18} className={location.pathname === '/social-assets' ? 'text-[#0D1137]' : 'text-slate-400'} />
+                مولد الأصول البصرية
+              </NavLink>
             </div>
           </nav>
 

@@ -26,6 +26,7 @@ import { FacebookPlan } from './src/pages/plans/FacebookPlan';
 import { InstagramPlan } from './src/pages/plans/InstagramPlan';
 import { XPlan } from './src/pages/plans/XPlan';
 import { EducationHub } from './src/pages/EducationHub';
+import { SocialAssetsPage } from './src/pages/SocialAssetsPage';
 
 // Protected Route Component - MUST check loading before redirecting
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -243,6 +244,9 @@ const App = () => {
                                     <Route path="growth" element={<EducationHub />} />
                                     <Route path="tools" element={<EducationHub />} />
                                 </Route>
+
+                                {/* Social Assets Generator */}
+                                <Route path="social-assets" element={<SocialAssetsPage />} />
 
                             </Route>
                         </Routes>

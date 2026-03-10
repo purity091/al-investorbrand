@@ -1,53 +1,998 @@
-import React from 'react';
-import { SectionHeader } from '../../../components/SectionHeader';
-import { Palette, Moon, Layout } from 'lucide-react';
+import React, { useState } from 'react';
+import {
+    Palette,
+    Type,
+    Grid3x3,
+    Image as ImageIcon,
+    Shapes,
+    Download,
+    Copy,
+    Check,
+    Eye,
+    Layers,
+    Contrast,
+    Ruler,
+    Monitor,
+    BookOpen,
+    Sparkles,
+    X,
+    AlertTriangle,
+    TrendingUp,
+    Activity,
+    Target,
+    Zap,
+    Shield,
+    BarChart3,
+    LineChart,
+    PieChart,
+    CandlestickChart,
+    ArrowUpRight,
+    ArrowDownRight,
+    Minus,
+    Bell,
+    Clock,
+    Star
+} from 'lucide-react';
 
 export const VisualPage = () => {
-    return (
-        <div className="animate-in fade-in duration-500 space-y-16">
-            <SectionHeader
-                title="لغة البيانات البصرية | Data Visuals"
-                subtitle="الجمال في الدقة التقنية."
-            />
+    const [copiedColor, setCopiedColor] = useState<string | null>(null);
+    const [activeTab, setActiveTab] = useState<'colors' | 'typography' | 'logo' | 'grid' | 'icons'>('colors');
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                <div className="bg-[#0D1137] p-10 rounded-3xl text-white">
-                    <h3 className="font-bold text-white mb-6 flex items-center gap-2">
-                        <Moon size={20} className="text-[#00E1C1]" /> الوضع المظلم (Dark Mode)
-                    </h3>
-                    <p className="text-blue-200 mb-6 text-sm leading-relaxed">
-                        الوضع الافتراضي لمنصة رادار. لماذا؟ لأن المتداولين يحدقون في الشاشات لساعات طويلة. الخلفيات الداكنة تقلل من إجهاد العين وتجعل "الألوان المضيئة" (الأخضر والأحمر) تبرز بوضوح أكبر.
-                    </p>
-                    <div className="grid grid-cols-3 gap-4 mt-8">
-                        <div className="h-12 bg-[#1F2937] rounded-lg border border-[#374151]"></div>
-                        <div className="h-12 bg-[#111827] rounded-lg border border-[#374151]"></div>
-                        <div className="h-12 bg-black rounded-lg border border-[#374151]"></div>
+    const copyToClipboard = (text: string, type: string) => {
+        navigator.clipboard.writeText(text);
+        setCopiedColor(type);
+        setTimeout(() => setCopiedColor(null), 2000);
+    };
+
+    const ColorSwatch = ({ name, hex, rgb, category }: { name: string; hex: string; rgb: string; category: string }) => (
+        <div className="group relative bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-lg transition-all duration-300">
+            <div 
+                className="h-32 w-full relative"
+                style={{ backgroundColor: hex }}
+            >
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <button
+                        onClick={() => copyToClipboard(hex, name)}
+                        className="bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium text-slate-800 flex items-center gap-2 shadow-lg hover:bg-white transition-colors"
+                    >
+                        {copiedColor === name ? <Check size={16} /> : <Copy size={16} />}
+                        {copiedColor === name ? 'تم النسخ!' : 'نسخ HEX'}
+                    </button>
+                </div>
+            </div>
+            <div className="p-5">
+                <div className="flex items-start justify-between mb-2">
+                    <div>
+                        <h4 className="font-bold text-slate-800">{name}</h4>
+                        <p className="text-xs text-slate-500 mt-0.5">{category}</p>
                     </div>
+                    <button
+                        onClick={() => copyToClipboard(hex, name)}
+                        className="text-slate-400 hover:text-slate-600 transition-colors"
+                    >
+                        {copiedColor === name ? <Check size={18} className="text-green-500" /> : <Copy size={18} />}
+                    </button>
+                </div>
+                <div className="space-y-1">
+                    <p className="text-sm font-mono text-slate-600">{hex}</p>
+                    <p className="text-xs text-slate-400">{rgb}</p>
+                </div>
+            </div>
+        </div>
+    );
+
+    return (
+        <div className="animate-in fade-in duration-500 space-y-12">
+            {/* Hero Section */}
+            <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-3xl p-12 text-white">
+                <div className="absolute inset-0 opacity-10">
+                    <div className="absolute top-20 left-20 w-72 h-72 bg-emerald-500 rounded-full blur-3xl"></div>
+                    <div className="absolute bottom-20 right-20 w-96 h-96 bg-emerald-600 rounded-full blur-3xl"></div>
                 </div>
 
-                <div className="bg-white p-10 rounded-3xl border border-slate-100">
-                    <h3 className="font-bold text-[#0D1137] mb-6 flex items-center gap-2">
-                        <Palette size={20} className="text-[#0D1137]" /> ألوان الإشارة (Signal Colors)
-                    </h3>
-                    <p className="text-slate-600 mb-6 text-sm leading-relaxed">
-                        نستخدم ألواناً نيونية (Neon) عالية التباين لضمان عدم تفويت أي إشارة.
+                <div className="relative z-10">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center shadow-2xl">
+                            <Target className="text-white" size={32} />
+                        </div>
+                        <div>
+                            <h1 className="text-4xl font-bold mb-1">الهوية البصرية</h1>
+                            <p className="text-white/70">Radar Visual Identity System</p>
+                        </div>
+                    </div>
+
+                    <p className="text-xl text-white/80 max-w-3xl leading-relaxed">
+                        نظام بصري متقدم لمنصة رادار الاستثمارية، مصمم خصيصاً لتجربة التداول والتحليل المالي.
+                        دقة البيانات遇上 جماليات التصميم الحديث.
                     </p>
-                    <div className="space-y-4">
-                        <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                            <span className="text-sm font-bold text-[#0D1137]">صعود قوي</span>
-                            <div className="w-16 h-4 bg-[#10B981] rounded shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
-                        </div>
-                        <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                            <span className="text-sm font-bold text-[#0D1137]">هبوط حاد</span>
-                            <div className="w-16 h-4 bg-[#EF4444] rounded shadow-[0_0_10px_rgba(239,68,68,0.5)]"></div>
-                        </div>
-                        <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                            <span className="text-sm font-bold text-[#0D1137]">تنبيه / تحذير</span>
-                            <div className="w-16 h-4 bg-[#F59E0B] rounded shadow-[0_0_10px_rgba(245,158,11,0.5)]"></div>
-                        </div>
+
+                    <div className="flex gap-4 mt-8">
+                        <button className="bg-white text-slate-900 px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-white/90 transition-colors">
+                            <Download size={20} />
+                            تحميل دليل الهوية
+                        </button>
+                        <button className="bg-white/10 backdrop-blur-sm text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-white/20 transition-colors border border-white/20">
+                            <Eye size={20} />
+                            معاينة حية
+                        </button>
                     </div>
                 </div>
             </div>
+
+            {/* Navigation Tabs */}
+            <div className="flex gap-2 overflow-x-auto pb-2">
+                {[
+                    { id: 'colors', label: 'نظام الألوان', icon: Palette },
+                    { id: 'typography', label: 'نظام الخطوط', icon: Type },
+                    { id: 'logo', label: 'نظام الشعار', icon: Shapes },
+                    { id: 'grid', label: 'الشبكة والتصميم', icon: Grid3x3 },
+                    { id: 'icons', label: 'الأيقونات', icon: Layers },
+                ].map((tab) => (
+                    <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id as any)}
+                        className={`px-6 py-3 rounded-xl font-medium flex items-center gap-2 whitespace-nowrap transition-all ${
+                            activeTab === tab.id
+                                ? 'bg-slate-900 text-white shadow-lg'
+                                : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'
+                        }`}
+                    >
+                        <tab.icon size={18} />
+                        {tab.label}
+                    </button>
+                ))}
+            </div>
+
+            {/* Colors Section */}
+            {activeTab === 'colors' && (
+                <div className="space-y-12">
+                    {/* Primary Colors */}
+                    <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm">
+                        <div className="flex items-center gap-3 mb-8">
+                            <div className="w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center">
+                                <Palette className="text-white" size={24} />
+                            </div>
+                            <div>
+                                <h2 className="text-2xl font-bold text-slate-800">الألوان الأساسية</h2>
+                                <p className="text-slate-500">Primary Color Palette - أساس الهوية البصرية</p>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                            <ColorSwatch
+                                name="أسود رادار"
+                                hex="#000000"
+                                rgb="RGB(0, 0, 0)"
+                                category="Primary - اللون الأساسي"
+                            />
+                            <ColorSwatch
+                                name="كحلي عميق"
+                                hex="#0F172A"
+                                rgb="RGB(15, 23, 42)"
+                                category="Primary Dark - الخلفيات"
+                            />
+                            <ColorSwatch
+                                name="أبيض نقي"
+                                hex="#FFFFFF"
+                                rgb="RGB(255, 255, 255)"
+                                category="Neutral - النصوص"
+                            />
+                            <ColorSwatch
+                                name="أبيض ثلجي"
+                                hex="#F8FAFC"
+                                rgb="RGB(248, 250, 252)"
+                                category="Background - الخلفيات الفاتحة"
+                            />
+                        </div>
+
+                        <div className="bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl p-6 text-white">
+                            <h3 className="font-bold mb-4 flex items-center gap-2">
+                                <Contrast size={20} />
+                                معايير التباين - WCAG 2.1 AAA Compliant
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                                    <p className="text-sm text-white/70 mb-2">الأبيض على الأسود</p>
+                                    <p className="text-3xl font-bold">21:1</p>
+                                    <p className="text-xs text-emerald-400 mt-2">✓ Pass AAA</p>
+                                </div>
+                                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                                    <p className="text-sm text-white/70 mb-2">الأخضر على الكحلي</p>
+                                    <p className="text-3xl font-bold">14.2:1</p>
+                                    <p className="text-xs text-emerald-400 mt-2">✓ Pass AAA</p>
+                                </div>
+                                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                                    <p className="text-sm text-white/70 mb-2">النص الرئيسي</p>
+                                    <p className="text-3xl font-bold">18.5:1</p>
+                                    <p className="text-xs text-emerald-400 mt-2">✓ Pass AAA</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Signal Colors */}
+                    <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm">
+                        <div className="flex items-center gap-3 mb-8">
+                            <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center">
+                                <TrendingUp className="text-white" size={24} />
+                            </div>
+                            <div>
+                                <h2 className="text-2xl font-bold text-slate-800">ألوان الإشارات التداولية</h2>
+                                <p className="text-slate-500">Trading Signal Colors - للبيانات والأسواق</p>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+                            <ColorSwatch
+                                name="أخضر الصعود"
+                                hex="#10B981"
+                                rgb="RGB(16, 185, 129)"
+                                category="للصعود والنمو"
+                            />
+                            <ColorSwatch
+                                name="أخضر فاتح"
+                                hex="#34D399"
+                                rgb="RGB(52, 211, 153)"
+                                category="للصعود القوي"
+                            />
+                            <ColorSwatch
+                                name="أخضر غامق"
+                                hex="#059669"
+                                rgb="RGB(5, 150, 105)"
+                                category="للشراء"
+                            />
+                            <ColorSwatch
+                                name="أخضر داكن"
+                                hex="#047857"
+                                rgb="RGB(4, 120, 87)"
+                                category="للإشارات القوية"
+                            />
+                            <ColorSwatch
+                                name="أخضر شاحب"
+                                hex="#D1FAE5"
+                                rgb="RGB(209, 250, 229)"
+                                category="للخلفيات الإيجابية"
+                            />
+                        </div>
+
+                        {/* Trading Examples */}
+                        <div className="mt-8 p-6 bg-slate-50 rounded-xl">
+                            <h4 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                                <CandlestickChart size={20} />
+                                أمثلة على استخدام ألوان التداول
+                            </h4>
+                            <div className="space-y-3">
+                                <div className="flex items-center justify-between p-4 bg-white rounded-lg border border-slate-200">
+                                    <div className="flex items-center gap-3">
+                                        <ArrowUpRight className="text-emerald-500" size={24} />
+                                        <span className="font-medium text-slate-700">صعود قوي (+5.2%)</span>
+                                    </div>
+                                    <div className="px-4 py-2 bg-emerald-500 text-white rounded-lg font-bold text-sm">
+                                        +5.2%
+                                    </div>
+                                </div>
+                                <div className="flex items-center justify-between p-4 bg-white rounded-lg border border-slate-200">
+                                    <div className="flex items-center gap-3">
+                                        <ArrowDownRight className="text-red-500" size={24} />
+                                        <span className="font-medium text-slate-700">هبوط حاد (-3.8%)</span>
+                                    </div>
+                                    <div className="px-4 py-2 bg-red-500 text-white rounded-lg font-bold text-sm">
+                                        -3.8%
+                                    </div>
+                                </div>
+                                <div className="flex items-center justify-between p-4 bg-white rounded-lg border border-slate-200">
+                                    <div className="flex items-center gap-3">
+                                        <Minus className="text-slate-400" size={24} />
+                                        <span className="font-medium text-slate-700">ثبات (0.0%)</span>
+                                    </div>
+                                    <div className="px-4 py-2 bg-slate-400 text-white rounded-lg font-bold text-sm">
+                                        0.0%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Neutral & UI Colors */}
+                    <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm">
+                        <div className="flex items-center gap-3 mb-8">
+                            <div className="w-12 h-12 bg-slate-500 rounded-xl flex items-center justify-center">
+                                <Layers className="text-white" size={24} />
+                            </div>
+                            <div>
+                                <h2 className="text-2xl font-bold text-slate-800">الألوان المحايدة وواجهة المستخدم</h2>
+                                <p className="text-slate-500">Neutral & UI Colors - للعناصر والواجهات</p>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+                            <ColorSwatch
+                                name="كحلي داكن جداً"
+                                hex="#020617"
+                                rgb="RGB(2, 6, 23)"
+                                category="أغمق لون"
+                            />
+                            <ColorSwatch
+                                name="كحلي متوسط"
+                                hex="#1E293B"
+                                rgb="RGB(30, 41, 59)"
+                                category="للخلفيات الثانوية"
+                            />
+                            <ColorSwatch
+                                name="رمادي أزرق"
+                                hex="#64748B"
+                                rgb="RGB(100, 116, 139)"
+                                category="للنصوص الثانوية"
+                            />
+                            <ColorSwatch
+                                name="رمادي متوسط"
+                                hex="#94A3B8"
+                                rgb="RGB(148, 163, 184)"
+                                category="للحدود"
+                            />
+                            <ColorSwatch
+                                name="رمادي فاتح"
+                                hex="#CBD5E1"
+                                rgb="RGB(203, 213, 225)"
+                                category="للخلفيات الفاتحة"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Functional Colors */}
+                    <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm">
+                        <div className="flex items-center gap-3 mb-8">
+                            <div className="w-12 h-12 bg-emerald-400 rounded-xl flex items-center justify-center">
+                                <Shield className="text-white" size={24} />
+                            </div>
+                            <div>
+                                <h2 className="text-2xl font-bold text-slate-800">ألوان الحالات الوظيفية</h2>
+                                <p className="text-slate-500">Functional Colors - UI States</p>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                            <div className="flex items-center gap-4 p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+                                <div className="w-16 h-16 bg-emerald-500 rounded-xl flex items-center justify-center">
+                                    <Check className="text-white" size={32} />
+                                </div>
+                                <div>
+                                    <p className="font-bold text-slate-800">Success</p>
+                                    <p className="text-sm font-mono text-slate-600">#10B981</p>
+                                    <p className="text-xs text-slate-500">للعمليات الناجحة</p>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-4 p-4 rounded-xl bg-sky-50 border border-sky-200">
+                                <div className="w-16 h-16 bg-sky-100 rounded-xl flex items-center justify-center border-2 border-sky-300">
+                                    <Bell className="text-sky-600" size={32} />
+                                </div>
+                                <div>
+                                    <p className="font-bold text-slate-800">Info</p>
+                                    <p className="text-sm font-mono text-slate-600">#CFFAFE</p>
+                                    <p className="text-xs text-slate-500">للمعلومات</p>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-4 p-4 rounded-xl bg-amber-50 border border-amber-200">
+                                <div className="w-16 h-16 bg-amber-500 rounded-xl flex items-center justify-center">
+                                    <AlertTriangle className="text-white" size={32} />
+                                </div>
+                                <div>
+                                    <p className="font-bold text-slate-800">Warning</p>
+                                    <p className="text-sm font-mono text-slate-600">#F59E0B</p>
+                                    <p className="text-xs text-slate-500">للتحذيرات</p>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-4 p-4 rounded-xl bg-red-50 border border-red-200">
+                                <div className="w-16 h-16 bg-red-500 rounded-xl flex items-center justify-center">
+                                    <X className="text-white" size={32} />
+                                </div>
+                                <div>
+                                    <p className="font-bold text-slate-800">Error</p>
+                                    <p className="text-sm font-mono text-slate-600">#EF4444</p>
+                                    <p className="text-xs text-slate-500">للأخطاء</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Typography Section */}
+            {activeTab === 'typography' && (
+                <div className="space-y-8">
+                    <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm">
+                        <div className="flex items-center gap-3 mb-8">
+                            <div className="w-12 h-12 bg-[#0F172A] rounded-xl flex items-center justify-center">
+                                <Type className="text-white" size={24} />
+                            </div>
+                            <div>
+                                <h2 className="text-2xl font-bold text-slate-800">نظام الخطوط</h2>
+                                <p className="text-slate-500">Typography System - IBM Plex Sans Arabic</p>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+                            <div className="space-y-6">
+                                <div className="p-6 bg-slate-50 rounded-2xl">
+                                    <p className="text-sm text-slate-500 mb-2">العناوين الرئيسية - 36px</p>
+                                    <h1 className="text-4xl font-bold text-[#020617] leading-tight mb-2" style={{ fontFamily: 'IBM Plex Sans Arabic' }}>
+                                        مؤشر رادار يسجل ارتفاعاً قياسياً
+                                    </h1>
+                                    <p className="text-xs text-slate-400">IBM Plex Sans Arabic Black (900) | Line-height: 1.2</p>
+                                </div>
+
+                                <div className="p-6 bg-slate-50 rounded-2xl">
+                                    <p className="text-sm text-slate-500 mb-2">العناوين الفرعية - 24px</p>
+                                    <h2 className="text-2xl font-bold text-[#0F172A] leading-tight mb-2" style={{ fontFamily: 'IBM Plex Sans Arabic' }}>
+                                        تحليل شامل لأداء السوق
+                                    </h2>
+                                    <p className="text-xs text-slate-400">IBM Plex Sans Arabic Bold (700) | Line-height: 1.3</p>
+                                </div>
+
+                                <div className="p-6 bg-slate-50 rounded-2xl">
+                                    <p className="text-sm text-slate-500 mb-2">العناوين الصغيرة - 18px</p>
+                                    <h3 className="text-xl font-semibold text-[#1E293B] leading-tight mb-2" style={{ fontFamily: 'IBM Plex Sans Arabic' }}>
+                                        إشارات تداول يومية
+                                    </h3>
+                                    <p className="text-xs text-slate-400">IBM Plex Sans Arabic SemiBold (600) | Line-height: 1.4</p>
+                                </div>
+                            </div>
+
+                            <div className="space-y-6">
+                                <div className="p-6 bg-slate-50 rounded-2xl">
+                                    <p className="text-sm text-slate-500 mb-2">النص الأساسي - 18px</p>
+                                    <p className="text-lg text-[#64748B] leading-relaxed mb-2" style={{ fontFamily: 'IBM Plex Sans Arabic' }}>
+                                        أظهرت بيانات رادار اليوم إشارات تداول إيجابية على معظم الأسهم المدرجة، 
+                                        حيث سجل المؤشر الرئيسي ارتفاعاً بنسبة 2.3% مقارنة بجلسة الأمس. 
+                                        هذا الارتفاع يعكس ثقة المستثمرين في الأداء الاقتصادي.
+                                    </p>
+                                    <p className="text-xs text-slate-400">IBM Plex Sans Arabic Regular (400) | Line-height: 1.6</p>
+                                </div>
+
+                                <div className="p-6 bg-slate-50 rounded-2xl">
+                                    <p className="text-sm text-slate-500 mb-2">النص الصغير - 14px</p>
+                                    <p className="text-sm text-[#94A3B8] leading-relaxed mb-2" style={{ fontFamily: 'IBM Plex Sans Arabic' }}>
+                                        آخر تحديث: منذ 5 دقائق | المصدر: تداول السعودية
+                                    </p>
+                                    <p className="text-xs text-slate-400">IBM Plex Sans Arabic Regular (400) | Line-height: 1.5</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-right">
+                                <thead>
+                                    <tr className="border-b border-slate-200">
+                                        <th className="pb-4 text-sm font-semibold text-slate-600">الاستخدام</th>
+                                        <th className="pb-4 text-sm font-semibold text-slate-600">الحجم</th>
+                                        <th className="pb-4 text-sm font-semibold text-slate-600">الوزن</th>
+                                        <th className="pb-4 text-sm font-semibold text-slate-600">ارتفاع السطر</th>
+                                        <th className="pb-4 text-sm font-semibold text-slate-600">مثال</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="text-sm">
+                                    <tr className="border-b border-slate-100">
+                                        <td className="py-4 text-slate-600">العناوين الرئيسية</td>
+                                        <td className="py-4 font-mono text-slate-500">36px</td>
+                                        <td className="py-4 text-slate-600">Black (900)</td>
+                                        <td className="py-4 font-mono text-slate-500">1.2</td>
+                                        <td className="py-4"><span className="text-2xl font-black" style={{ fontFamily: 'IBM Plex Sans Arabic' }}>عنوان</span></td>
+                                    </tr>
+                                    <tr className="border-b border-slate-100">
+                                        <td className="py-4 text-slate-600">العناوين الفرعية</td>
+                                        <td className="py-4 font-mono text-slate-500">24px</td>
+                                        <td className="py-4 text-slate-600">Bold (700)</td>
+                                        <td className="py-4 font-mono text-slate-500">1.3</td>
+                                        <td className="py-4"><span className="text-xl font-bold" style={{ fontFamily: 'IBM Plex Sans Arabic' }}>عنوان</span></td>
+                                    </tr>
+                                    <tr className="border-b border-slate-100">
+                                        <td className="py-4 text-slate-600">النص الأساسي</td>
+                                        <td className="py-4 font-mono text-slate-500">18px</td>
+                                        <td className="py-4 text-slate-600">Regular (400)</td>
+                                        <td className="py-4 font-mono text-slate-500">1.6</td>
+                                        <td className="py-4"><span className="text-base" style={{ fontFamily: 'IBM Plex Sans Arabic' }}>نص</span></td>
+                                    </tr>
+                                    <tr className="border-b border-slate-100">
+                                        <td className="py-4 text-slate-600">النص الصغير</td>
+                                        <td className="py-4 font-mono text-slate-500">14px</td>
+                                        <td className="py-4 text-slate-600">Regular (400)</td>
+                                        <td className="py-4 font-mono text-slate-500">1.5</td>
+                                        <td className="py-4"><span className="text-sm" style={{ fontFamily: 'IBM Plex Sans Arabic' }}>نص</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td className="py-4 text-slate-600">الأزرار</td>
+                                        <td className="py-4 font-mono text-slate-500">16px</td>
+                                        <td className="py-4 text-slate-600">Medium (500)</td>
+                                        <td className="py-4 font-mono text-slate-500">1.4</td>
+                                        <td className="py-4"><span className="px-3 py-1 bg-[#10B981] text-white rounded text-sm font-medium" style={{ fontFamily: 'IBM Plex Sans Arabic' }}>زر</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div className="bg-gradient-to-r from-[#020617] to-[#0F172A] rounded-3xl p-8 text-white">
+                        <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                            <BookOpen size={24} />
+                            إرشادات استخدام الخطوط
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-4">
+                                <h4 className="font-semibold text-[#10B981] flex items-center gap-2">
+                                    <Check size={20} className="text-[#10B981]" />
+                                    المسموح
+                                </h4>
+                                <ul className="space-y-2 text-sm text-white/80">
+                                    <li className="flex items-start gap-2">
+                                        <Check size={16} className="text-[#10B981] mt-0.5 flex-shrink-0" />
+                                        استخدام IBM Plex Sans Arabic فقط
+                                    </li>
+                                    <li className="flex items-start gap-2">
+                                        <Check size={16} className="text-[#10B981] mt-0.5 flex-shrink-0" />
+                                        الحفاظ على أحجام الخطوط المحددة
+                                    </li>
+                                    <li className="flex items-start gap-2">
+                                        <Check size={16} className="text-[#10B981] mt-0.5 flex-shrink-0" />
+                                        استخدام التباين الصحيح بين العناوين والنصوص
+                                    </li>
+                                    <li className="flex items-start gap-2">
+                                        <Check size={16} className="text-[#10B981] mt-0.5 flex-shrink-0" />
+                                        الحفاظ على ارتفاع السطر المحدد
+                                    </li>
+                                </ul>
+                            </div>
+                            <div className="space-y-4">
+                                <h4 className="font-semibold text-red-400 flex items-center gap-2">
+                                    <X size={20} className="text-red-400" />
+                                    الممنوع
+                                </h4>
+                                <ul className="space-y-2 text-sm text-white/80">
+                                    <li className="flex items-start gap-2">
+                                        <X size={16} className="text-red-400 mt-0.5 flex-shrink-0" />
+                                        استخدام خطوط أخرى غير المعتمدة
+                                    </li>
+                                    <li className="flex items-start gap-2">
+                                        <X size={16} className="text-red-400 mt-0.5 flex-shrink-0" />
+                                        تمطيط أو ضغط النصوص
+                                    </li>
+                                    <li className="flex items-start gap-2">
+                                        <X size={16} className="text-red-400 mt-0.5 flex-shrink-0" />
+                                        استخدام ألوان غير معتمدة للنصوص
+                                    </li>
+                                    <li className="flex items-start gap-2">
+                                        <X size={16} className="text-red-400 mt-0.5 flex-shrink-0" />
+                                        تقليل حجم النص الأساسي عن 18px
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Logo Section */}
+            {activeTab === 'logo' && (
+                <div className="space-y-8">
+                    <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm">
+                        <div className="flex items-center gap-3 mb-8">
+                            <div className="w-12 h-12 bg-[#0F172A] rounded-xl flex items-center justify-center">
+                                <Shapes className="text-white" size={24} />
+                            </div>
+                            <div>
+                                <h2 className="text-2xl font-bold text-slate-800">نظام الشعار</h2>
+                                <p className="text-slate-500">Logo System - التكوين والاستخدام</p>
+                            </div>
+                        </div>
+
+                        {/* Logo Preview */}
+                        <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-12 mb-8">
+                            <div className="flex flex-col items-center justify-center">
+                                {/* Logo Mark */}
+                                <div className="w-32 h-32 bg-gradient-to-br from-[#0F172A] to-[#020617] rounded-2xl flex items-center justify-center shadow-2xl mb-6">
+                                    <div className="relative w-20 h-20">
+                                        <div className="absolute inset-0 border-4 border-[#10B981] rounded-lg"></div>
+                                        <div className="absolute inset-2 border-2 border-white/30 rounded-md"></div>
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                            <Target className="text-[#10B981]" size={32} />
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                {/* Logo Text */}
+                                <h1 className="text-5xl font-black text-[#0F172A] mb-2" style={{ fontFamily: 'IBM Plex Sans Arabic' }}>
+                                    رادار
+                                </h1>
+                                <p className="text-lg text-[#64748B] font-medium">Radar</p>
+                            </div>
+                        </div>
+
+                        {/* Logo Variations */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                            <div className="p-6 bg-white rounded-xl border-2 border-slate-200">
+                                <p className="text-sm text-slate-500 mb-4 text-center">الشعار العمودي</p>
+                                <div className="flex flex-col items-center py-8">
+                                    <div className="w-16 h-16 bg-[#0F172A] rounded-xl flex items-center justify-center mb-3">
+                                        <Target className="text-[#10B981]" size={32} />
+                                    </div>
+                                    <p className="text-2xl font-black text-[#0F172A]" style={{ fontFamily: 'IBM Plex Sans Arabic' }}>رادار</p>
+                                    <p className="text-sm text-[#64748B]">Radar</p>
+                                </div>
+                            </div>
+
+                            <div className="p-6 bg-white rounded-xl border-2 border-slate-200">
+                                <p className="text-sm text-slate-500 mb-4 text-center">الشعار الأفقي</p>
+                                <div className="flex items-center justify-center py-8 gap-4">
+                                    <div className="w-12 h-12 bg-[#0F172A] rounded-xl flex items-center justify-center">
+                                        <Target className="text-[#10B981]" size={24} />
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="text-2xl font-black text-[#0F172A]" style={{ fontFamily: 'IBM Plex Sans Arabic' }}>رادار</p>
+                                        <p className="text-sm text-[#64748B]">Radar</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="p-6 bg-white rounded-xl border-2 border-slate-200">
+                                <p className="text-sm text-slate-500 mb-4 text-center">الأيقونة (Favicon)</p>
+                                <div className="flex items-center justify-center py-8">
+                                    <div className="w-16 h-16 bg-[#0F172A] rounded-xl flex items-center justify-center">
+                                        <Target className="text-[#10B981]" size={32} />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Clear Space */}
+                        <div className="bg-slate-50 rounded-xl p-6 mb-8">
+                            <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                                <Ruler size={20} />
+                                مساحة الأمان (Clear Space)
+                            </h3>
+                            <div className="flex items-center justify-center py-8">
+                                <div className="relative">
+                                    <div className="absolute -inset-8 border-2 border-dashed border-[#10B981] rounded-3xl"></div>
+                                    <div className="w-24 h-24 bg-[#0F172A] rounded-2xl flex items-center justify-center">
+                                        <Target className="text-[#10B981]" size={48} />
+                                    </div>
+                                    <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs text-[#10B981] font-mono">X</div>
+                                    <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs text-[#10B981] font-mono">X</div>
+                                    <div className="absolute -left-6 top-1/2 transform -translate-y-1/2 text-xs text-[#10B981] font-mono">X</div>
+                                    <div className="absolute -right-6 top-1/2 transform -translate-y-1/2 text-xs text-[#10B981] font-mono">X</div>
+                                </div>
+                            </div>
+                            <p className="text-sm text-slate-600 text-center">
+                                ترك مسافة تعادل عرض العمود الصغير (X) من جميع الجهات
+                            </p>
+                        </div>
+
+                        {/* Minimum Size */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="bg-white rounded-xl border border-slate-200 p-6">
+                                <h4 className="font-semibold text-slate-800 mb-4 flex items-center gap-2">
+                                    <Monitor size={18} />
+                                    الحد الأدنى للحجم - الويب
+                                </h4>
+                                <div className="flex items-center gap-4">
+                                    <div className="w-6 h-6 bg-[#0F172A] rounded flex items-center justify-center">
+                                        <Target className="text-[#10B981]" size={14} />
+                                    </div>
+                                    <p className="text-sm text-slate-600">24px (أيقونة)</p>
+                                </div>
+                            </div>
+
+                            <div className="bg-white rounded-xl border border-slate-200 p-6">
+                                <h4 className="font-semibold text-slate-800 mb-4 flex items-center gap-2">
+                                    <BookOpen size={18} />
+                                    الحد الأدنى للحجم - المطبوعات
+                                </h4>
+                                <div className="flex items-center gap-4">
+                                    <div className="w-8 h-8 bg-[#0F172A] rounded flex items-center justify-center">
+                                        <Target className="text-[#10B981]" size={20} />
+                                    </div>
+                                    <p className="text-sm text-slate-600">8mm (مطبوعات)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Logo Don'ts */}
+                    <div className="bg-gradient-to-r from-red-50 to-orange-50 rounded-3xl p-8 border border-red-200">
+                        <h3 className="text-xl font-bold text-red-800 mb-6 flex items-center gap-2">
+                            <X size={24} className="text-red-600" />
+                            الممنوعات في استخدام الشعار
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div className="bg-white/50 rounded-xl p-4 text-center">
+                                <div className="w-20 h-20 mx-auto mb-3 bg-gradient-to-br from-pink-500 to-purple-500 rounded-xl flex items-center justify-center opacity-50">
+                                    <Target className="text-white" size={32} />
+                                </div>
+                                <p className="text-sm font-medium text-red-800">التشويه الهندسي</p>
+                            </div>
+                            <div className="bg-white/50 rounded-xl p-4 text-center">
+                                <div className="w-20 h-20 mx-auto mb-3 bg-[#0F172A] rounded-full flex items-center justify-center transform rotate-45">
+                                    <Target className="text-white" size={32} />
+                                </div>
+                                <p className="text-sm font-medium text-red-800">التدوير</p>
+                            </div>
+                            <div className="bg-white/50 rounded-xl p-4 text-center">
+                                <div className="w-20 h-20 mx-auto mb-3 bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500 rounded-xl flex items-center justify-center">
+                                    <Target className="text-white" size={32} />
+                                </div>
+                                <p className="text-sm font-medium text-red-800">الخلفيات المشوشة</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Grid Section */}
+            {activeTab === 'grid' && (
+                <div className="space-y-8">
+                    <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm">
+                        <div className="flex items-center gap-3 mb-8">
+                            <div className="w-12 h-12 bg-[#0F172A] rounded-xl flex items-center justify-center">
+                                <Grid3x3 className="text-white" size={24} />
+                            </div>
+                            <div>
+                                <h2 className="text-2xl font-bold text-slate-800">الشبكة السويسرية</h2>
+                                <p className="text-slate-500">Swiss Grid System - التنظيم البصري</p>
+                            </div>
+                        </div>
+
+                        <div className="bg-slate-50 rounded-2xl p-8 mb-8">
+                            <p className="text-slate-600 text-center mb-8 leading-relaxed">
+                                نعتمد "الشبكة السويسرية" في التصميم. تنظيم صارم للعناصر، مساحات بيضاء مدروسة، 
+                                وخطوط فاصلة دقيقة. البيانات المالية تحتاج دقة في التنظيم.
+                            </p>
+
+                            {/* Grid Visualization */}
+                            <div className="bg-white rounded-xl p-6 shadow-inner">
+                                <div className="grid grid-cols-12 gap-3">
+                                    {/* Header */}
+                                    <div className="col-span-12 h-24 bg-[#0F172A] rounded-lg flex items-center justify-center">
+                                        <p className="text-white font-bold">Header / Logo Area</p>
+                                    </div>
+                                    
+                                    {/* Main Content */}
+                                    <div className="col-span-8 h-48 bg-[#10B981]/20 rounded-lg flex items-center justify-center border-2 border-dashed border-[#10B981]">
+                                        <p className="text-[#0F172A] font-medium">البيانات الرئيسية (8 أعمدة)</p>
+                                    </div>
+                                    <div className="col-span-4 h-48 bg-slate-200 rounded-lg flex items-center justify-center border-2 border-dashed border-slate-400">
+                                        <p className="text-slate-600 font-medium">الشريط الجانبي (4 أعمدة)</p>
+                                    </div>
+
+                                    {/* Secondary Row */}
+                                    <div className="col-span-4 h-32 bg-slate-100 rounded-lg flex items-center justify-center border-2 border-dashed border-slate-300">
+                                        <p className="text-slate-500 font-medium text-sm">بطاقة 1</p>
+                                    </div>
+                                    <div className="col-span-4 h-32 bg-slate-100 rounded-lg flex items-center justify-center border-2 border-dashed border-slate-300">
+                                        <p className="text-slate-500 font-medium text-sm">بطاقة 2</p>
+                                    </div>
+                                    <div className="col-span-4 h-32 bg-slate-100 rounded-lg flex items-center justify-center border-2 border-dashed border-slate-300">
+                                        <p className="text-slate-500 font-medium text-sm">بطاقة 3</p>
+                                    </div>
+
+                                    {/* Footer */}
+                                    <div className="col-span-12 h-16 bg-[#1E293B] rounded-lg flex items-center justify-center">
+                                        <p className="text-white/70 text-sm">Footer</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-3 gap-4 mt-8">
+                                <div className="text-center p-4 bg-white rounded-xl">
+                                    <p className="text-3xl font-bold text-[#0F172A]">12</p>
+                                    <p className="text-sm text-slate-500 mt-1">عمود أساسي</p>
+                                </div>
+                                <div className="text-center p-4 bg-white rounded-xl">
+                                    <p className="text-3xl font-bold text-[#0F172A]">24px</p>
+                                    <p className="text-sm text-slate-500 mt-1">مسافة بين الأعمدة</p>
+                                </div>
+                                <div className="text-center p-4 bg-white rounded-xl">
+                                    <p className="text-3xl font-bold text-[#0F172A]">8px</p>
+                                    <p className="text-sm text-slate-500 mt-1">وحدة القياس الأساسية</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Spacing System */}
+                        <div className="mb-8">
+                            <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                                <Layers size={20} />
+                                نظام المسافات (Spacing System)
+                            </h3>
+                            <div className="space-y-4">
+                                {[8, 16, 24, 32, 48, 64].map((size) => (
+                                    <div key={size} className="flex items-center gap-4">
+                                        <div className="w-20 text-sm font-mono text-slate-500">{size}px</div>
+                                        <div className="flex-1 h-8 bg-slate-100 rounded flex items-center px-3">
+                                            <div 
+                                                className="h-2 bg-[#10B981] rounded"
+                                                style={{ width: `${Math.min(size * 2, 100)}%` }}
+                                            ></div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Layout Examples */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="bg-white rounded-xl border border-slate-200 p-6">
+                                <h4 className="font-semibold text-slate-800 mb-4">تخطيط لوحة التحكم</h4>
+                                <div className="aspect-video bg-slate-50 rounded-lg border-2 border-dashed border-slate-300 flex items-center justify-center">
+                                    <p className="text-slate-400 text-sm">مثال تخطيط Dashboard</p>
+                                </div>
+                            </div>
+                            <div className="bg-white rounded-xl border border-slate-200 p-6">
+                                <h4 className="font-semibold text-slate-800 mb-4">تخطيط صفحة الإشارة</h4>
+                                <div className="aspect-video bg-slate-50 rounded-lg border-2 border-dashed border-slate-300 flex items-center justify-center">
+                                    <p className="text-slate-400 text-sm">مثال تخطيط صفحة التداول</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Icons Section */}
+            {activeTab === 'icons' && (
+                <div className="space-y-8">
+                    <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm">
+                        <div className="flex items-center gap-3 mb-8">
+                            <div className="w-12 h-12 bg-[#0F172A] rounded-xl flex items-center justify-center">
+                                <ImageIcon className="text-white" size={24} />
+                            </div>
+                            <div>
+                                <h2 className="text-2xl font-bold text-slate-800">نظام الأيقونات</h2>
+                                <p className="text-slate-500">Iconography - Lucide React Icons</p>
+                            </div>
+                        </div>
+
+                        <div className="bg-slate-50 rounded-2xl p-6 mb-8">
+                            <p className="text-slate-600 text-center leading-relaxed">
+                                نستخدم مكتبة <strong className="text-[#0F172A]">Lucide React</strong> للأيقونات. 
+                                سمك الخط: <strong className="text-[#0F172A]">1.5px</strong> للأيقونات الدقيقة، 
+                                <strong className="text-[#0F172A]"> 2px</strong> للأيقونات الرئيسية.
+                            </p>
+                        </div>
+
+                        {/* Icon Categories */}
+                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
+                            <div className="bg-white rounded-xl border border-slate-200 p-4 text-center hover:border-[#10B981] hover:shadow-md transition-all">
+                                <Activity size={32} className="text-[#0F172A] mx-auto mb-2" />
+                                <p className="text-xs text-slate-500">Activity</p>
+                            </div>
+                            <div className="bg-white rounded-xl border border-slate-200 p-4 text-center hover:border-[#10B981] hover:shadow-md transition-all">
+                                <BarChart3 size={32} className="text-[#0F172A] mx-auto mb-2" />
+                                <p className="text-xs text-slate-500">Charts</p>
+                            </div>
+                            <div className="bg-white rounded-xl border border-slate-200 p-4 text-center hover:border-[#10B981] hover:shadow-md transition-all">
+                                <LineChart size={32} className="text-[#0F172A] mx-auto mb-2" />
+                                <p className="text-xs text-slate-500">Line</p>
+                            </div>
+                            <div className="bg-white rounded-xl border border-slate-200 p-4 text-center hover:border-[#10B981] hover:shadow-md transition-all">
+                                <CandlestickChart size={32} className="text-[#0F172A] mx-auto mb-2" />
+                                <p className="text-xs text-slate-500">Candle</p>
+                            </div>
+                            <div className="bg-white rounded-xl border border-slate-200 p-4 text-center hover:border-[#10B981] hover:shadow-md transition-all">
+                                <TrendingUp size={32} className="text-[#0F172A] mx-auto mb-2" />
+                                <p className="text-xs text-slate-500">Trend</p>
+                            </div>
+                            <div className="bg-white rounded-xl border border-slate-200 p-4 text-center hover:border-[#10B981] hover:shadow-md transition-all">
+                                <Target size={32} className="text-[#0F172A] mx-auto mb-2" />
+                                <p className="text-xs text-slate-500">Target</p>
+                            </div>
+                            <div className="bg-white rounded-xl border border-slate-200 p-4 text-center hover:border-[#10B981] hover:shadow-md transition-all">
+                                <Zap size={32} className="text-[#0F172A] mx-auto mb-2" />
+                                <p className="text-xs text-slate-500">Signal</p>
+                            </div>
+                            <div className="bg-white rounded-xl border border-slate-200 p-4 text-center hover:border-[#10B981] hover:shadow-md transition-all">
+                                <Bell size={32} className="text-[#0F172A] mx-auto mb-2" />
+                                <p className="text-xs text-slate-500">Alert</p>
+                            </div>
+                            <div className="bg-white rounded-xl border border-slate-200 p-4 text-center hover:border-[#10B981] hover:shadow-md transition-all">
+                                <Clock size={32} className="text-[#0F172A] mx-auto mb-2" />
+                                <p className="text-xs text-slate-500">Time</p>
+                            </div>
+                            <div className="bg-white rounded-xl border border-slate-200 p-4 text-center hover:border-[#10B981] hover:shadow-md transition-all">
+                                <Star size={32} className="text-[#0F172A] mx-auto mb-2" />
+                                <p className="text-xs text-slate-500">Favorite</p>
+                            </div>
+                            <div className="bg-white rounded-xl border border-slate-200 p-4 text-center hover:border-[#10B981] hover:shadow-md transition-all">
+                                <PieChart size={32} className="text-[#0F172A] mx-auto mb-2" />
+                                <p className="text-xs text-slate-500">Pie</p>
+                            </div>
+                            <div className="bg-white rounded-xl border border-slate-200 p-4 text-center hover:border-[#10B981] hover:shadow-md transition-all">
+                                <ArrowUpRight size={32} className="text-[#0F172A] mx-auto mb-2" />
+                                <p className="text-xs text-slate-500">Up</p>
+                            </div>
+                        </div>
+
+                        {/* Icon Sizes */}
+                        <div className="mb-8">
+                            <h3 className="font-bold text-slate-800 mb-4">أحجام الأيقونات</h3>
+                            <div className="flex items-end gap-8 p-6 bg-white rounded-xl border border-slate-200">
+                                <div className="text-center">
+                                    <Activity size={16} className="text-[#0F172A] mx-auto mb-2" />
+                                    <p className="text-xs text-slate-500">16px</p>
+                                </div>
+                                <div className="text-center">
+                                    <Activity size={24} className="text-[#0F172A] mx-auto mb-2" />
+                                    <p className="text-xs text-slate-500">24px</p>
+                                </div>
+                                <div className="text-center">
+                                    <Activity size={32} className="text-[#0F172A] mx-auto mb-2" />
+                                    <p className="text-xs text-slate-500">32px</p>
+                                </div>
+                                <div className="text-center">
+                                    <Activity size={48} className="text-[#0F172A] mx-auto mb-2" />
+                                    <p className="text-xs text-slate-500">48px</p>
+                                </div>
+                                <div className="text-center">
+                                    <Activity size={64} className="text-[#0F172A] mx-auto mb-2" />
+                                    <p className="text-xs text-slate-500">64px</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Icon Usage */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="bg-green-50 rounded-xl border border-green-200 p-6">
+                                <h4 className="font-semibold text-green-800 mb-4 flex items-center gap-2">
+                                    <Check size={18} className="text-green-600" />
+                                    الاستخدام الصحيح
+                                </h4>
+                                <ul className="space-y-2 text-sm text-green-700">
+                                    <li className="flex items-start gap-2">
+                                        <Check size={16} className="text-green-600 mt-0.5 flex-shrink-0" />
+                                        استخدام أيقونات Lucide فقط
+                                    </li>
+                                    <li className="flex items-start gap-2">
+                                        <Check size={16} className="text-green-600 mt-0.5 flex-shrink-0" />
+                                        الحفاظ على سمك الخط المحدد
+                                    </li>
+                                    <li className="flex items-start gap-2">
+                                        <Check size={16} className="text-green-600 mt-0.5 flex-shrink-0" />
+                                        استخدام الألوان المعتمدة
+                                    </li>
+                                    <li className="flex items-start gap-2">
+                                        <Check size={16} className="text-green-600 mt-0.5 flex-shrink-0" />
+                                        الحفاظ على التناسق في الحجم
+                                    </li>
+                                </ul>
+                            </div>
+                            <div className="bg-red-50 rounded-xl border border-red-200 p-6">
+                                <h4 className="font-semibold text-red-800 mb-4 flex items-center gap-2">
+                                    <X size={18} className="text-red-600" />
+                                    الاستخدام الخاطئ
+                                </h4>
+                                <ul className="space-y-2 text-sm text-red-700">
+                                    <li className="flex items-start gap-2">
+                                        <X size={16} className="text-red-600 mt-0.5 flex-shrink-0" />
+                                        خلط مكتبات أيقونات مختلفة
+                                    </li>
+                                    <li className="flex items-start gap-2">
+                                        <X size={16} className="text-red-600 mt-0.5 flex-shrink-0" />
+                                        تغيير سمك الخط عشوائياً
+                                    </li>
+                                    <li className="flex items-start gap-2">
+                                        <X size={16} className="text-red-600 mt-0.5 flex-shrink-0" />
+                                        استخدام ألوان غير معتمدة
+                                    </li>
+                                    <li className="flex items-start gap-2">
+                                        <X size={16} className="text-red-600 mt-0.5 flex-shrink-0" />
+                                        تغيير حجم الأيقونة بشكل غير متناسب
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

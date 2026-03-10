@@ -1,0 +1,438 @@
+.social-assets-page {
+    --bg-color: #fafafa;
+    --card-bg: #ffffff;
+    --card-border: #e4e4e7;
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.02);
+    --shadow-md: 0 10px 24px rgba(0, 0, 0, 0.04);
+    --text-primary: #09090b;
+    --text-secondary: #3f3f46;
+    --text-muted: #71717a;
+    --info-bg: #f4f4f5;
+    background: var(--bg-color);
+    min-height: 100vh;
+    font-family: 'IBM Plex Sans Arabic', 'Inter', system-ui, -apple-system, sans-serif;
+    color: var(--text-primary);
+    direction: rtl;
+    padding-bottom: 5rem;
+}
+
+.social-assets-page * {
+    box-sizing: border-box;
+}
+
+.social-assets-page .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+/* Header */
+.social-assets-page .page-header {
+    background: #ffffff;
+    border-bottom: 1px solid var(--card-border);
+    padding: 4rem 0 3rem 0;
+    margin-bottom: 3rem;
+}
+
+.social-assets-page .badge {
+    display: inline-block;
+    padding: 0.4rem 1rem;
+    background: #f1f5f9;
+    color: #1e293b;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.social-assets-page .page-header h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin: 0 0 1rem 0;
+    color: var(--text-primary);
+}
+
+.social-assets-page .page-header p {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    max-width: 700px;
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* Uploader Section */
+.social-assets-page .uploader-section {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    margin-bottom: 4rem;
+}
+
+.social-assets-page .upload-box {
+    background: #ffffff;
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.social-assets-page .upload-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.social-assets-page .upload-header .icon {
+    color: #94a3b8;
+}
+
+.social-assets-page .upload-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.social-assets-page .upload-header .recommended {
+    margin-right: auto;
+    font-size: 0.8rem;
+    color: #64748b;
+    background: #f8fafc;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+}
+
+.social-assets-page .upload-area {
+    width: 100%;
+    height: 250px;
+    border: 2px dashed #cbd5e1;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: all 0.2s;
+    overflow: hidden;
+}
+
+.social-assets-page .upload-area:hover {
+    border-color: #94a3b8;
+    background-color: #f8fafc;
+}
+
+.social-assets-page .upload-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    color: #64748b;
+    pointer-events: none;
+}
+
+.social-assets-page .upload-placeholder .icon-large {
+    width: 32px;
+    height: 32px;
+}
+
+.social-assets-page .upload-placeholder p {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.social-assets-page .upload-area input[type="file"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+.social-assets-page .upload-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.social-assets-page .upload-area:hover .upload-overlay {
+    opacity: 1;
+}
+
+.social-assets-page .btn-remove {
+    background: #ef4444;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background 0.2s;
+}
+
+.social-assets-page .btn-remove:hover {
+    background: #b91c1c;
+}
+
+.social-assets-page .circle-preview {
+    border-radius: 50%;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
+}
+
+/* Platforms Section */
+.social-assets-page .section-title {
+    margin-bottom: 2rem;
+}
+
+.social-assets-page .section-title h2 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin: 0 0 0.5rem 0;
+}
+
+.social-assets-page .section-title p {
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.social-assets-page .platforms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 2rem;
+}
+
+.social-assets-page .platform-card {
+    background: #ffffff;
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.social-assets-page .platform-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.social-assets-page .title-area {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.8rem;
+}
+
+.social-assets-page .platform-icon {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+}
+
+.social-assets-page .title-area h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.social-assets-page .platform-desc {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.social-assets-page .visual-preview {
+    background: #f8fafc;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+}
+
+.social-assets-page .preview-container {
+    width: 100%;
+    max-width: 300px;
+    position: relative;
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.social-assets-page .cover-preview {
+    width: 100%;
+    height: 100px;
+    background-color: #e2e8f0;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.social-assets-page .cover-preview.no-cover {
+    background: repeating-linear-gradient(45deg, #f1f5f9, #f1f5f9 10px, #f8fafc 10px, #f8fafc 20px);
+}
+
+.social-assets-page .empty-text {
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.social-assets-page .profile-preview {
+    width: 60px;
+    height: 60px;
+    background-color: #cbd5e1;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    position: absolute;
+    top: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Platform Specific Placements */
+.social-assets-page .x-profile {
+    right: 16px;
+    top: 70px;
+}
+
+.social-assets-page .linkedin-profile {
+    left: 16px;
+    top: 50px;
+    width: 70px;
+    height: 70px;
+}
+
+.social-assets-page .facebook-profile {
+    right: 16px;
+    top: 60px;
+}
+
+.social-assets-page .instagram-profile {
+    position: relative;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: 2rem auto;
+    width: 80px;
+    height: 80px;
+}
+
+/* Insta doesnt have cover, center the profile */
+
+.social-assets-page .download-actions {
+    padding: 1.5rem;
+    background: #ffffff;
+    border-top: 1px solid var(--card-border);
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.social-assets-page .action-btn {
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: none;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+
+.social-assets-page .profile-btn {
+    background: var(--brand-color);
+    color: #fff;
+}
+
+.social-assets-page .profile-btn:hover:not(:disabled) {
+    opacity: 0.9;
+}
+
+.social-assets-page .cover-btn {
+    background: #f1f5f9;
+    color: #334155;
+    border: 1px solid #e2e8f0;
+}
+
+.social-assets-page .cover-btn:hover:not(:disabled) {
+    background: #e2e8f0;
+    color: #0f172a;
+}
+
+.social-assets-page .action-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #f1f5f9;
+    color: #94a3b8;
+    border: 1px solid #e2e8f0;
+}
+
+.social-assets-page .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 1024px) {
+    .social-assets-page .uploader-section {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .social-assets-page .page-header {
+        padding: 3rem 0;
+    }
+
+    .social-assets-page .page-header h1 {
+        font-size: 2rem;
+    }
+
+    .social-assets-page .platforms-grid {
+        grid-template-columns: 1fr;
+    }
+}
